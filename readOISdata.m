@@ -1,28 +1,4 @@
 function OIS_raw = readOISdata(filename, t1, tN, maxTenorYears)
-% READOISDATA  Read OIS (EONIA swap) rates from Bloomberg Excel file.
-%
-%   Reads the EONIA_BBG sheet. Structure as seen by xlsread:
-%     Row 1 : start date string in col 1, rest NaN
-%     Row 2 : empty
-%     Row 3 : ticker names in odd cols (1,3,5,...), NaN in even cols
-%     Row 4 : 'Date'/'PX_LAST' alternating from col 1
-%     Row 5 : tenor labels: number in odd cols, unit string in even cols
-%     Row 6 : Bloomberg BDH formulas -> returned as NaN by xlsread (skipped)
-%     Row 7+: data: date string in odd cols, rate (double) in even cols
-%
-%   INPUT:
-%     filename      : path to the Excel file
-%     t1            : start date (Matlab datenum, inclusive)
-%     tN            : end date   (Matlab datenum, inclusive)
-%     maxTenorYears : maximum tenor in years to keep (e.g. 10)
-%
-%   OUTPUT:
-%     OIS_raw : struct array, one element per business day in [t1,tN].
-%       .valueDate : Matlab datenum of the value date
-%       .tenors    : [N x 1] tenor vector in years (approximate)
-%       .rates     : [N x 1] OIS rates in % (e.g. 3.5 means 3.5%)
-%
-%   Reference: [1] Baviera & Cassaro (2015), Section 2.
 
 fprintf('  Reading file: %s\n', filename);
 [~, ~, raw] = xlsread(filename, 'EONIA_BBG');

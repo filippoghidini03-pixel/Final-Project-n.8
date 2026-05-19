@@ -1,0 +1,130 @@
+function OIS_raw = readOISdata(filename, t1, tN, maxTenorYears)
+% READOISDATA  Read OIS (EONIA swap) rates from Bloomberg Excel file.
+%
+%   Reads the EONIA_BBG sheet. Structure as seen by xlsread:
+%     Row 1 : start date string in col 1, rest NaN
+%     Row 2 : empty
+%     Row 3 : ticker names in odd cols (1,3,5,...), NaN in even cols
+%     Row 4 : 'Date'/'PX_LAST' alternating from col 1
+%     Row 5 : tenor labels: number in odd cols, unit string in even cols
+%     Row 6 : Bloomberg BDH formulas -> returned as NaN by xlsread (skipped)
+%     Row 7+: data: date string in odd cols, rate (double) in even cols
+%
+%   INPUT:
+%     filename      : path to the Excel file
+%     t1            : start date (Matlab datenum, inclusive)
+%     tN            : end date   (Matlab datenum, inclusive)
+%     maxTenorYears : maximum tenor in years to keep (e.g. 10)
+%
+%   OUTPUT:
+%     OIS_raw : struct array, one element per business day in [t1,tN].
+%       .valueDate : Matlab datenum of the value date
+%       .tenors    : [N x 1] tenor vector in years (approximate)
+%       .rates     : [N x 1] OIS rates in % (e.g. 3.5 means 3.5%)
+%
+%   Reference: [1] Baviera & Cassaro (2015), Section 2.
+
+fprintf('  Reading file: %s\n', filename);
+[~, ~, raw] = xlsread(filename, 'EONIA_BBG');
+
+ROW_TENORS = 5;
+ROW_DATA   = 7;
+
+% ---- Parse tenor labels from row 5 ------------------------------------
+tenorRow   = raw(ROW_TENORS, :);
+nCols      = size(raw, 2);
+tenorYears = [];
+colDate    = [];
+colRate    = [];
+
+c = 1;
+while c <= nCols - 1
+    num  = tenorRow{c};
+    unit = tenorRow{c+1};
+    if isempty(num) || (isnumeric(num) && isnan(num)), break; end
+    if ~isnumeric(num) || ~ischar(unit), break; end
+
+    if strcmpi(unit, 'm')
+        tyr = num / 12;
+    elseif strcmpi(unit, 'y')
+        tyr = num;
+    else
+        c = c + 2; continue;
+    end
+
+    if tyr <= maxTenorYears + 0.01
+        tenorYears(end+1) = tyr;   %#ok<AGROW>
+        colDate(end+1)    = c;     %#ok<AGROW>
+        colRate(end+1)    = c + 1; %#ok<AGROW>
+    end
+    c = c + 2;
+end
+
+nTenors = length(tenorYears);
+fprintf('  Found %d tenors up to %g years.\n', nTenors, maxTenorYears);
+if nTenors == 0
+    error('readOISdata: no tenors found. Check file structure.');
+end
+
+% ---- Parse data rows ---------------------------------------------------
+dataRaw = raw(ROW_DATA:end, :);
+nRows   = size(dataRaw, 1);
+
+% Collect dates from reference column (first tenor date col)
+refCol   = colDate(1);
+allDates = nan(nRows, 1);
+for r = 1 : nRows
+    d = dataRaw{r, refCol};
+    if ischar(d) && ~isempty(d)
+        allDates(r) = datenum(d, 'dd/mm/yyyy');
+    end
+end
+
+valid    = ~isnan(allDates);
+allDates = allDates(valid);
+validIdx = find(valid);
+nDates   = length(allDates);
+
+% Collect rates for all tenors
+rateMatrix = nan(nDates, nTenors);
+for t = 1 : nTenors
+    rc = colRate(t);
+    for r = 1 : nDates
+        v = dataRaw{validIdx(r), rc};
+        if isnumeric(v) && ~isnan(v)
+            rateMatrix(r, t) = v;
+        end
+    end
+end
+
+% ---- Filter to [t1, tN] and sort ascending ----------------------------
+inRange    = (allDates >= t1) & (allDates <= tN);
+allDates   = allDates(inRange);
+rateMatrix = rateMatrix(inRange, :);
+[allDates, sortIdx] = sort(allDates, 'ascend');
+rateMatrix = rateMatrix(sortIdx, :);
+nDates     = length(allDates);
+
+% ---- Build output struct -----------------------------------------------
+OIS_raw  = struct('valueDate',cell(nDates,1),'tenors',cell(nDates,1),'rates',cell(nDates,1));
+nDropped = 0;
+k        = 0;
+
+for i = 1 : nDates
+    rates = rateMatrix(i, :)';
+    if any(isnan(rates))
+        nDropped = nDropped + 1; continue;
+    end
+    k = k + 1;
+    OIS_raw(k).valueDate = allDates(i);
+    OIS_raw(k).tenors    = tenorYears(:);
+    OIS_raw(k).rates     = rates;
+end
+OIS_raw = OIS_raw(1:k);
+
+fprintf('  Dates in [t1,tN]  : %d\n', nDates);
+if nDropped > 0
+    fprintf('  Dropped (incomplete): %d days\n', nDropped);
+end
+
+end

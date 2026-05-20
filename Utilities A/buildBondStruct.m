@@ -1,8 +1,8 @@
 function bond = buildBondStruct(filename, t1, tN)
 
 % Read Excel sheets directly into cell arrays
-[~, ~, info] = xlsread(filename, 'Info');
-[~, ~, data] = xlsread(filename, 'Data');
+info = readcell(filename, 'Sheet', 'Info');
+data = readcell(filename, 'Sheet', 'Data');
 
 % Create a simple lookup map: Bloomberg Name -> Row Index
 infoMap = containers.Map();

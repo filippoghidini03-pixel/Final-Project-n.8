@@ -53,7 +53,7 @@ for i = 1 : nDates
     % --- 4. Store Results ---
     EONIA(i).Dates           = allDates;          
     EONIA(i).Rates           = [NaN; rates * 100]; 
-    EONIA(i).DiscountFactors = PD;                
+    EONIA(i).DiscountFactors = PD;  
 end 
 end 
 

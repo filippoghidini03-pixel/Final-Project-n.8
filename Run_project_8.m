@@ -1,16 +1,9 @@
 %% Run_project_8.m
 % Main script for Project 8 - ASW Spread on BTPs and BONOs
 % Financial Engineering - Politecnico di Milano
-%
-% References:
-%   [1] Baviera & Cassaro (2015), Mr. Crab's Bootstrap, AMF 22, 105-132
-%   [2] Baviera & Lebovitz (2015), A sovereign bond based index for
-%       financial instability in the euro zone, Mimeo
-
 clear; close all; clc;
 
 %%  PARAMETERS
-
 
 % Date range for the analysis
 t1 = datenum('01/01/2007', 'dd/mm/yyyy');
@@ -38,3 +31,32 @@ EONIA = bootstrapEONIA(OIS_raw, settleLag);
 fprintf('  Bootstrap complete for %d dates.\n', length(EONIA));
 
 plotEONIA(EONIA, []);
+
+
+%% =========================================================
+%  PART A.2-A.4 — Read and build bond struct arrays
+%% =========================================================
+ 
+fprintf('=== PART A.2-A.4: Building BTP struct ===\n');
+bond_BTP = buildBondStruct(fileBTP, t1, tN);
+fprintf('  BTPs kept: %d\n', length(bond_BTP));
+ 
+fprintf('=== PART A.2-A.4: Building BONO struct ===\n');
+bond_BON = buildBondStruct(fileBON, t1, tN);
+fprintf('  BONOs kept: %d\n', length(bond_BON));
+ 
+%% =========================================================
+%  PART A.4 — Save .mat file
+%% =========================================================
+ 
+fprintf('=== PART A.4: Saving results ===\n');
+save('project8_data.mat', 'EONIA', 'bond_BTP', 'bond_BON');
+fprintf('  Saved to project8_data.mat\n');
+
+%%
+load('project8_data.mat');
+for i = 1 : length(bond_BTP)
+    bond_BTP(i).pricesCleanValues = filter_prices(bond_BTP(i).pricesCleanValues);
+end
+%%
+bond_BTP(end - 1).pricesCleanValues

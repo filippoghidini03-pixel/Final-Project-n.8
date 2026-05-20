@@ -34,7 +34,7 @@ function bond = buildBondStruct(filename, t1, tN)
 %     - Bonds in Data sheet are matched to Info by Bloomberg ID (the order
 %       differs between the two sheets).
 %
-%   Reference: [2] Baviera & Lebovitz (2015), Appendix.
+
 
 EXCEL_BASE       = datenum('30/12/1899', 'dd/mm/yyyy');
 DATE_1999        = datenum('01/01/1999', 'dd/mm/yyyy');

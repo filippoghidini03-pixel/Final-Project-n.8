@@ -12,7 +12,7 @@ tN = datenum('31/12/2015', 'dd/mm/yyyy');
 % Settlement lag (in business days)
 settleLag = 2;
 
-% OIS bootstrap: use tenors up to 10y only (as per project specs)
+% OIS bootstrap: use tenors up to 10y only 
 maxTenorYears = 10;
 
 % File paths
@@ -35,7 +35,7 @@ plotEONIA(EONIA, []);
 
 %% =========================================================
 %  PART A.2-A.4 — Read and build bond struct arrays
-%% =========================================================
+%=========================================================
  
 fprintf('=== PART A.2-A.4: Building BTP struct ===\n');
 bond_BTP = buildBondStruct(fileBTP, t1, tN);
@@ -47,7 +47,7 @@ fprintf('  BONOs kept: %d\n', length(bond_BON));
  
 %% =========================================================
 %  PART A.4 — Save .mat file
-%% =========================================================
+% =========================================================
  
 fprintf('=== PART A.4: Saving results ===\n');
 save('project8_data.mat', 'EONIA', 'bond_BTP', 'bond_BON');
@@ -59,4 +59,4 @@ for i = 1 : length(bond_BTP)
     bond_BTP(i).pricesCleanValues = filter_prices(bond_BTP(i).pricesCleanValues);
 end
 %%
-bond_BTP(end - 1).pricesCleanValues
+vector=bond_BTP(end - 1).pricesCleanValues;

@@ -1,8 +1,17 @@
 function OIS_raw = readOISdata(filename, t1, tN, maxTenorYears)
 
 fprintf('  Reading file: %s\n', filename);
-[~, ~, raw] = xlsread(filename, 'EONIA_BBG');
-
+raw = readcell(filename, 'Sheet', 'EONIA_BBG');
+for ci = 1:numel(raw)
+    v = raw{ci};
+    if isdatetime(v)
+        raw{ci} = datenum(v);          % converti a Matlab datenum
+    elseif ~isnumeric(v) && ~ischar(v)
+        raw{ci} = NaN;
+    elseif isnumeric(v) && isempty(v)
+        raw{ci} = NaN;
+    end
+end
 ROW_TENORS = 5;
 ROW_DATA   = 7;
 
@@ -53,6 +62,8 @@ for r = 1 : nRows
     d = dataRaw{r, refCol};
     if ischar(d) && ~isempty(d)
         allDates(r) = datenum(d, 'dd/mm/yyyy');
+    elseif isnumeric(d) && ~isnan(d)
+        allDates(r) = d;    % già datenum, passa direttamente
     end
 end
 

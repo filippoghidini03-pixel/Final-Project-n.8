@@ -1,10 +1,9 @@
 function [g] = filter_prices(prices)
+treshold = 0.5 ;
+g=prices;
 
-g=zeros(length(prices),1);
-g(1)=prices(1);
-g(end)=prices(end);
 for i = 2:length(prices)-1
-    if(abs(prices(i)-prices(i-1))>0.005 & abs(prices(i+1)-prices(i))>0.005 & (prices(i)-prices(i-1))*(prices(i+1)-prices(i))<0 )
+    if(abs(prices(i)-prices(i-1))>treshold && abs(prices(i+1)-prices(i))>treshold && (prices(i)-prices(i-1))*(prices(i+1)-prices(i))<0 )
     g(i)=(prices(i+1)+prices(i-1))/2 ;
     else
         g(i) = prices(i);

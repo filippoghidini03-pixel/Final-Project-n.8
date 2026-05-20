@@ -82,7 +82,7 @@ for i = 1 : nDates
     EONIA(i).valueDate       = vd;
     EONIA(i).t0              = t0;
     EONIA(i).Dates           = allDates;          % [N+1 x 1], starts at t0
-    EONIA(i).Rates           = rates * 100;       % back to %
+    EONIA(i).Rates           = [NaN;rates * 100];       % back to %
     EONIA(i).DiscountFactors = PD;                % [N+1 x 1], PD(1)=1
 
 end 

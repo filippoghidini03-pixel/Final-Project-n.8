@@ -30,7 +30,8 @@ fprintf('=== PART A.2-A.4: Building BONO struct ===\n');
 bond_BON = buildBondStruct(param.fileBON, param.t1, param.tN);
 fprintf('  BONOs kept: %d\n', length(bond_BON));
  
-%% PART A.4 — Save compiled database
+% Save compiled database
 fprintf('=== PART A.4: Saving results ===\n');
 save('project8_data.mat', 'EONIA', 'bond_BTP', 'bond_BON');
 fprintf('  Saved to project8_data.mat\n\n=== Part A Complete ===\n');
+vector=bond_BTP(end-1).pricesCleanValues;

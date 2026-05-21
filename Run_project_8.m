@@ -18,16 +18,18 @@ fprintf('=== PART A.1: Bootstrapping EONIA curve ===\n');
 
 [Dates, Discounts, Rates] = bootstrapEONIA(OIS_raw, param.settleLag);
 
+% A.2 is done by hand, have we to make it on matlab?
 % Part A.3-A.4: Filtering and building the struct
+fprintf('=== PART A.4: Building EONIA struct ===\n');
 EONIA = buildEONIAstruct(Dates, Discounts, Rates);
 fprintf('Bootstrap complete for %d dates.\n', length(EONIA));
 plotEONIA(EONIA, []);
 
-fprintf('=== PART A.2-A.4: Building BTP struct ===\n');
+fprintf('=== PART A.4: Building BTP struct ===\n');
 bond_BTP = buildBondStruct(param.fileBTP, param.t1, param.tN);
 fprintf('BTPs kept: %d\n', length(bond_BTP));
  
-fprintf('=== PART A.2-A.4: Building BONO struct ===\n');
+fprintf('=== PART A.4: Building BONO struct ===\n');
 bond_BON = buildBondStruct(param.fileBON, param.t1, param.tN);
 fprintf('BONOs kept: %d\n', length(bond_BON));
  

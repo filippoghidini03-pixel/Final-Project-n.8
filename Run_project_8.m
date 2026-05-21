@@ -9,22 +9,20 @@ addpath('Utilities A')
 %% GLOBAL PARAMETERS INITIALIZATION
 param = initParameters();
 
-%% PART A.1 — Read OIS data and bootstrap EONIA curve
+%% PART A
+%  A.1: Read OIS data and bootstrap EONIA curve
 fprintf('=== PART A.1: Reading OIS data ===\n');
 OIS_raw = readOISdata(param.fileOIS, param.t1, param.tN, param.maxTenorYears);
 fprintf('Read %d business days of OIS rates.\n', length(OIS_raw));
 fprintf('=== PART A.1: Bootstrapping EONIA curve ===\n');
 
-% Bootstrapping
 [Dates, Discounts, Rates] = bootstrapEONIA(OIS_raw, param.settleLag);
 
-% Build the struct
+% Part A.3-A.4: Filtering and building the struct
 EONIA = buildEONIAstruct(Dates, Discounts, Rates);
 fprintf('Bootstrap complete for %d dates.\n', length(EONIA));
-
 plotEONIA(EONIA, []);
 
-%% PART A.2-A.4 — Read and build bond struct arrays
 fprintf('=== PART A.2-A.4: Building BTP struct ===\n');
 bond_BTP = buildBondStruct(param.fileBTP, param.t1, param.tN);
 fprintf('BTPs kept: %d\n', length(bond_BTP));

@@ -13,16 +13,15 @@ param = initParameters();
 fprintf('=== PART A.1: Reading OIS data ===\n');
 OIS_raw = readOISdata(param.fileOIS, param.t1, param.tN, param.maxTenorYears);
 fprintf('Read %d business days of OIS rates.\n', length(OIS_raw));
-
 fprintf('=== PART A.1: Bootstrapping EONIA curve ===\n');
-% 1. Estrai le tre celle dal bootstrap
+
+% Bootstrapping
 [Dates, Discounts, Rates] = bootstrapEONIA(OIS_raw, param.settleLag);
 
 % Build the struct
 EONIA = buildEONIAstruct(Dates, Discounts, Rates);
 fprintf('Bootstrap complete for %d dates.\n', length(EONIA));
 
-% 3. Fai il plot
 plotEONIA(EONIA, []);
 
 %% PART A.2-A.4 — Read and build bond struct arrays

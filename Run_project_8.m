@@ -1,10 +1,10 @@
 %% Run_project_8.m
-% Main script for Project 8 - ASW Spread on BTPs and BONOs
+% Main script for Project 8 
 clear; 
 close all; 
 clc;
 
-addpath('Data');
+addpath('Data')
 addpath('Utilities A')
 %% GLOBAL PARAMETERS INITIALIZATION
 param = initParameters();
@@ -15,10 +15,15 @@ OIS_raw = readOISdata(param.fileOIS, param.t1, param.tN, param.maxTenorYears);
 fprintf('  Read %d business days of OIS rates.\n', length(OIS_raw));
 
 fprintf('=== PART A.1: Bootstrapping EONIA curve ===\n');
-EONIA = bootstrapEONIA(OIS_raw, param.settleLag);
+% 1. Estrai le tre celle dal bootstrap
+[allDatesOut, PDout, ratesOut] = bootstrapEONIA(OIS_raw, param.settleLag);
+
+% 2. Assembla la struct con la tua nuova funzione
+EONIA = buildEONIAstruct(allDatesOut, PDout, ratesOut);
+
 fprintf('  Bootstrap complete for %d dates.\n', length(EONIA));
 
-% Display representative zero-rate curves across different market regimes
+% 3. Fai il plot
 plotEONIA(EONIA, []);
 
 %% PART A.2-A.4 — Read and build bond struct arrays

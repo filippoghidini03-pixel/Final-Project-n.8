@@ -99,7 +99,7 @@ for c = 1 : size(data, 2)
     bond(nKept).pricesDates       = dates;
     bond(nKept).pricesCleanValues = cleanPrices;
     bond(nKept).pricesDirtyValues = dirtyPrices;
-end % <-- This was the missing end for the main column loop!
+end 
 
 fprintf('  Bonds kept successfully: %d\n', nKept);
 

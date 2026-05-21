@@ -1,7 +1,6 @@
 function OIS_raw = readOISdata(filename, t1, tN, maxTenorYears)
 % READOISDATA  Reads OIS curve data from Excel and formats it cleanly.
 
-fprintf('  Reading file: %s\n', filename);
 raw = readcell(filename, 'Sheet', 'EONIA_BBG');
 
 % Convert Excel datetime objects directly into Matlab datenums (Essential for parsing)
@@ -19,9 +18,7 @@ end
 ROW_TENORS = 5;
 ROW_DATA   = 7;
 
-% =========================================================================
-% 1. PARSE TENOR LABELS (Row 5)
-% =========================================================================
+% 1. PARSE TENOR LABELS 
 tenorRow   = raw(ROW_TENORS, :);
 nCols      = size(raw, 2);
 tenorYears = [];
@@ -53,14 +50,12 @@ while c <= nCols - 1
 end
 
 nTenors = length(tenorYears);
-fprintf('  Found %d tenors up to %g years.\n', nTenors, maxTenorYears);
+fprintf('Found %d tenors up to %g years.\n', nTenors, maxTenorYears);
 if nTenors == 0
     error('readOISdata: no tenors found. Check file structure.');
 end
 
-% =========================================================================
 % 2. PARSE DATA ROWS
-% =========================================================================
 dataRaw = raw(ROW_DATA:end, :);
 nRows   = size(dataRaw, 1);
 
@@ -101,9 +96,7 @@ rateMatrix = rateMatrix(inRange, :);
 rateMatrix = rateMatrix(sortIdx, :);
 nDates     = length(allDates);
 
-% =========================================================================
 % 3. BUILD OUTPUT STRUCTURE
-% =========================================================================
 OIS_raw  = struct('valueDate', cell(nDates, 1), 'tenors', cell(nDates, 1), 'rates', cell(nDates, 1));
 nDropped = 0;
 k        = 0;
@@ -121,9 +114,9 @@ for i = 1 : nDates
 end
 OIS_raw = OIS_raw(1:k);
 
-fprintf('  Dates in [t1, tN] : %d\n', nDates);
+fprintf('Dates in [t1, tN] : %d\n', nDates);
 if nDropped > 0
-    fprintf('  Dropped (incomplete data rows): %d days\n', nDropped);
+    fprintf('Dropped (incomplete data rows): %d days\n', nDropped);
 end
 
 end

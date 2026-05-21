@@ -18,9 +18,8 @@ fprintf('=== PART A.1: Bootstrapping EONIA curve ===\n');
 % 1. Estrai le tre celle dal bootstrap
 [Dates, Discounts, Rates] = bootstrapEONIA(OIS_raw, param.settleLag);
 
-% 2. Assembla la struct con la tua nuova funzione
+% Build the struct
 EONIA = buildEONIAstruct(Dates, Discounts, Rates);
-
 fprintf('Bootstrap complete for %d dates.\n', length(EONIA));
 
 % 3. Fai il plot

@@ -13,9 +13,9 @@ function ai = computeAccrual(dates, firstCpnDate, cpnValue, cpnFreq)
 % Apply the T+2 settlement rule. By shifting the dates, some might 
 % land on a weekend (1=Sunday, 7=Saturday). If so, we adjust them 
 % by adding 2 more days to reach the next business days
-settle = dates + 2; 
-wd = weekday(settle); 
-settle(wd == 1 | wd == 7) = settle(wd == 1 | wd == 7) + 2;
+settle = dates; % + 2; 
+%wd = weekday(settle); 
+%settle(wd == 1 | wd == 7) = settle(wd == 1 | wd == 7) + 2;
 
 % Calculate the total time passed since the first coupon and the duration 
 % of a single period in years. This allows us to compute the fraction 

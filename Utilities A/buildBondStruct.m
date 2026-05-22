@@ -85,6 +85,7 @@ for r = 3:size(info, 1)
     
     % Dirty = clean + accrued [vectorized inside] 
     % Passing firstCpn perfectly integrates with the math-based computeAccrual
+    
     dirtyPrices = cleanPrices + computeAccrual(dates, firstCpn, cpnValue, cpnFreq);
     
     nKept = nKept + 1;

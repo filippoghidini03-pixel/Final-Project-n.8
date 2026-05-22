@@ -1,6 +1,24 @@
 function bond = buildBondStruct(filename, t1, tN)
-% BUILDBONDSTRUCT  Reads Info and Data sheets, builds bond struct.
-%   Dirty price = clean price + accrued interest (30/360)
+% BUILDBONDSTRUCT Reads bond data from an Excel file and builds a structured array.
+%
+% INPUTS:
+%   filename - String or char array specifying the name of the Excel file 
+%              (e.g., 'INPUT_BON.xlsx').
+%   t1       - Start date of the observation period (MATLAB datenum).
+%   tN       - End date of the observation period (MATLAB datenum).
+%
+% OUTPUT:
+%   bond     - A struct array containing the processed data for each valid bond.
+%              Fields for each struct:
+%              * BBGname: Bloomberg ticker of the bond.
+%              * settleDate: Settlement date (datenum).
+%              * expDate: Maturity/Expiration date (datenum).
+%              * firstCouponDate: Date of the very first coupon (datenum).
+%              * couponValue: Annual coupon rate (e.g., 4.5 for 4.5%).
+%              * couponFrequency: Number of coupon payments per year.
+%              * pricesDates: Vector of valid historical trade dates (datenum).
+%              * pricesCleanValues: Vector of historical clean prices.
+%              * pricesDirtyValues: Vector of computed dirty prices.
 
 EXCEL_BASE = datenum('30/12/1899', 'dd/mm/yyyy');
 
@@ -13,7 +31,7 @@ data(isDT) = cellfun(@(x) datenum(x), data(isDT), 'UniformOutput', false);
 isInvalid  = cellfun(@(x) (~isnumeric(x) && ~ischar(x)) || (isnumeric(x) && isempty(x)), data);
 data(isInvalid) = {NaN};
 
-% Detect stride and build bond-column map
+% Detect stride and build bond-column map based on 'PX_DIRTY_MID' presence
 hasDirty = any(cellfun(@(x) ischar(x) && strcmpi(strtrim(x), 'PX_DIRTY_MID'), data(2,:)));
 stride   = 3 + hasDirty;
 
@@ -55,7 +73,7 @@ for r = 3:size(info, 1)
     mask = ~isnan(dArr) & dArr < 50000;
     dArr(mask) = dArr(mask) + EXCEL_BASE;
     
-    % Keep only valid observations in [t1, tN] [vectorized] - PULITO, NESSUN FILTRO STRANO
+    % Keep only valid observations strictly within [t1, tN] [vectorized]
     valid = ~isnan(dArr) & ~isnan(clArr) & dArr >= t1 & dArr <= tN;
     
     dates       = dArr(valid);
@@ -66,7 +84,7 @@ for r = 3:size(info, 1)
     cleanPrices  = cleanPrices(idx);
     
     % Dirty = clean + accrued [vectorized inside] 
-    % TORNATO A firstCpn: Niente più crash di MATLAB sulla scadenza!
+    % Passing firstCpn perfectly integrates with the math-based computeAccrual
     dirtyPrices = cleanPrices + computeAccrual(dates, firstCpn, cpnValue, cpnFreq);
     
     nKept = nKept + 1;

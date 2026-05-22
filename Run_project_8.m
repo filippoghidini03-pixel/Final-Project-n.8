@@ -11,14 +11,11 @@ param = initParameters();
 
 %% PART A
 %  A.1: Read OIS data and bootstrap EONIA curve
-fprintf('=== PART A.1: Reading OIS data ===\n');
+fprintf('=== PART A.1: Reading OIS data & Bootstrapping EONIA curve ===\n');
 OIS_raw = readOISdata(param.fileOIS, param.t1, param.tN, param.maxTenorYears);
 fprintf('Read %d business days of OIS rates.\n', length(OIS_raw));
-fprintf('=== PART A.1: Bootstrapping EONIA curve ===\n');
-
 [Dates, Discounts, Rates] = bootstrapEONIA(OIS_raw, param.settleLag);
 
-% A.2 is done by hand, have we to make it on matlab?
 % Part A.3-A.4: Filtering and building the struct
 fprintf('=== PART A.4: Building EONIA struct ===\n');
 EONIA = buildEONIAstruct(Dates, Discounts, Rates);

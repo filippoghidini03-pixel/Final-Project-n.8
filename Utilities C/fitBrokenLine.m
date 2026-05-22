@@ -1,5 +1,5 @@
 function [tau_star, L_star] = fitBrokenLine(T, s)
-% Segmented regression with one breakpoint (Baviera & Lebovitz [2])
+% Segmented regression with one breakpoint 
 % T : expiries (sorted ascending) [n x 1]
 % s : ASW spreads                 [n x 1]
 % tau_star : optimal breakpoint

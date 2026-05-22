@@ -6,6 +6,7 @@ clc;
 
 addpath('Data')
 addpath('Utilities A')
+addpath('Utilities C')
 %% GLOBAL PARAMETERS INITIALIZATION
 param = initParameters();
 

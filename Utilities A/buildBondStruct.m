@@ -25,7 +25,7 @@ EXCEL_BASE = datenum('30/12/1899', 'dd/mm/yyyy');
 info = readcell(filename, 'Sheet', 'Info');
 data = readcell(filename, 'Sheet', 'Data');
 
-% Normalize Data: datetime -> datenum, invalid/empty -> NaN [vectorized]
+% Normalize Data: datetime -> datenum, invalid/empty -> NaN 
 isDT = cellfun(@isdatetime, data);
 data(isDT) = cellfun(@(x) datenum(x), data(isDT), 'UniformOutput', false);
 isInvalid  = cellfun(@(x) (~isnumeric(x) && ~ischar(x)) || (isnumeric(x) && isempty(x)), data);

@@ -1,6 +1,18 @@
 function OIS_raw = readOISdata(filename, t1, tN, maxTenorYears)
-% READOISDATA  Reads OIS curve data from Excel (EONIA_BBG sheet).
-%   Missing rates are forward-filled within each row (prev tenor value).
+% READOISDATA Reads and preprocesses OIS curve data from an Excel file.
+%
+% INPUTS:
+%   filename      - String or char array specifying the name of the Excel file.
+%   t1            - Start date of the observation period (MATLAB datenum).
+%   tN            - End date of the observation period (MATLAB datenum).
+%   maxTenorYears - Maximum maturity to extract, expressed in years (e.g., 30).
+%
+% OUTPUT:
+%   OIS_raw       - A struct array of length nDates containing the processed data.
+%                   Fields for each struct element:
+%                   * valueDate: The trade/observation date (datenum).
+%                   * tenors: Column vector of the extracted tenors in years.
+%                   * rates: Column vector of the corresponding OIS rates.
 
 raw = readcell(filename, 'Sheet', 'EONIA_BBG');
 
@@ -28,14 +40,15 @@ nCols      = size(raw, 2);
 tenorYears = [];
 colDate    = [];
 colRate    = [];
-
 c = 1;
+
 while c <= nCols - 1
     num  = tenorRow{c};
     unit = tenorRow{c+1};
+    
     if isempty(num) || (isnumeric(num) && isnan(num)), break; end
     if ~isnumeric(num) || ~ischar(unit), break; end
-
+    
     if strcmpi(unit, 'm')
         tyr = num / 12;
     elseif strcmpi(unit, 'y')
@@ -44,7 +57,7 @@ while c <= nCols - 1
         c = c + 2;
         continue;
     end
-
+    
     if tyr <= maxTenorYears + 0.01
         tenorYears(end+1) = tyr;
         colDate(end+1)    = c;
@@ -55,6 +68,7 @@ end
 
 nTenors = length(tenorYears);
 fprintf('Found %d tenors up to %g years.\n', nTenors, maxTenorYears);
+
 if nTenors == 0
     error('readOISdata: no tenors found. Check file structure.');
 end
@@ -68,6 +82,7 @@ nRows   = size(dataRaw, 1);
 % Collect dates from the first tenor date column
 refCol   = colDate(1);
 allDates = nan(nRows, 1);
+
 for r = 1 : nRows
     d = dataRaw{r, refCol};
     if isnumeric(d) && ~isnan(d)
@@ -84,6 +99,7 @@ nDates   = length(allDates);
 
 % Collect rates into a matrix [nDates x nTenors]
 rateMatrix = nan(nDates, nTenors);
+
 for t = 1 : nTenors
     rc = colRate(t);
     for r = 1 : nDates
@@ -106,6 +122,7 @@ for r = 1 : nDates
             rateMatrix(r, t) = rateMatrix(r, t-1);
         end
     end
+    
     % Backward fill: right to left (handles missing values at the start)
     for t = nTenors-1 : -1 : 1
         if isnan(rateMatrix(r, t)) && ~isnan(rateMatrix(r, t+1))
@@ -120,6 +137,7 @@ end
 inRange    = (allDates >= t1) & (allDates <= tN);
 allDates   = allDates(inRange);
 rateMatrix = rateMatrix(inRange, :);
+
 [allDates, sortIdx] = sort(allDates, 'ascend');
 rateMatrix          = rateMatrix(sortIdx, :);
 nDates              = length(allDates);
@@ -136,5 +154,4 @@ for i = 1 : nDates
 end
 
 fprintf('Dates in [t1, tN]: %d\n', nDates);
-
 end

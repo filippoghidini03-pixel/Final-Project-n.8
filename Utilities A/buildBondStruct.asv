@@ -60,17 +60,11 @@ priceRows(isNonNumeric) = {NaN};
 
 % Iniziamo a leggere il foglio dalla riga 3
 for r = 3:size(info, 1)
-    % Prendiamo il nome del bond, usando la mappa creata prima, guarda la
-    % prima colonna del foglio info
+    % Prendiamo il nome del bond, usando la mappa creata pri
     bbg = info{r, 1};
-    % Se la cella è vuota o non esiste il nome nella mappa saltiamo
-    if ~ischar(bbg) || isempty(bbg) 
-        continue; 
-    end
+    if ~ischar(bbg) || isempty(bbg), continue; end
     bbg = strtrim(bbg);
-    if ~isKey(dataMap, bbg)
-        continue; 
-    end
+    if ~isKey(dataMap, bbg), continue; end
     
     sc         = dataMap(bbg);
     settleDate = datenum(info{r, 2}, 'dd/mm/yyyy');

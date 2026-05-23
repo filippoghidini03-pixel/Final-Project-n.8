@@ -25,28 +25,23 @@ data = readcell(filename, 'Sheet', 'Data');
 
 EXCEL_BASE = datenum('30/12/1899', 'dd/mm/yyyy');
 
-% Stiamo verificando come sono importate le date da excel, e voglia
-% rimpiazzare i buchi o cose strane con i NaN, se presenti
+% Stiamo verificando come sono importate le date da e
 isDT = cellfun(@isdatetime, data);
 data(isDT) = cellfun(@(x) datenum(x), data(isDT), 'UniformOutput', false);
 isInvalid  = cellfun(@(x) (~isnumeric(x) && ~ischar(x)) || (isnumeric(x) && isempty(x)), data);
 data(isInvalid) = {NaN};
 
-% Serve per vedere quante colonne vuote ci sono tra un bond e l'altro
+% Detect stride and build bond-column map based on 'PX_DIRTY_MID' presence
 hasDirty = any(cellfun(@(x) ischar(x) && strcmpi(strtrim(x), 'PX_DIRTY_MID'), data(2,:)));
 stride   = 3 + hasDirty;
 
-% Costruisce una mappa dei bond, molto utile per trovare rapidamente il bond
 dataMap = containers.Map();
 for c = 1:stride:size(data, 2)
     name = data{1, c};
-    if ~ischar(name) || isempty(name) 
-        break; 
-    end
+    if ~ischar(name) || isempty(name), break; end
     dataMap(strtrim(name)) = c;
 end
 
-% Iniziamo a costruire la struct
 bond      = struct('BBGname',{}, 'settleDate',{}, 'expDate',{}, ...
                    'firstCouponDate',{}, 'couponValue',{}, 'couponFrequency',{}, ...
                    'pricesDates',{}, 'pricesCleanValues',{}, 'pricesDirtyValues',{});

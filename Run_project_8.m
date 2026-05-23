@@ -35,3 +35,15 @@ fprintf('=== PART A.4: Saving results ===\n');
 save('project8_data.mat', 'EONIA', 'bond_BTP', 'bond_BON');
 fprintf('Saved to project8_data.mat\n\n=== Part A Complete ===\n');
 vector=bond_BTP(end-1).pricesCleanValues;
+
+%% PART B
+%  B.1-B.2: Compute ASW spread and Zeta spread over EONIA for each bond/date
+fprintf('\n=== PART B: Computing ASW and Zeta spreads ===\n');
+addpath('Utilities A')
+
+[Spreads_BTP, Spreads_BON] = computeASWspreads(EONIA, bond_BTP, bond_BON);
+
+% B.3: Save results
+fprintf('=== PART B: Saving spread results ===\n');
+save('project8_spreads.mat', 'Spreads_BTP', 'Spreads_BON');
+fprintf('Saved to project8_spreads.mat\n\n=== Part B Complete ===\n');

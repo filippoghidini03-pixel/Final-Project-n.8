@@ -51,17 +51,26 @@ bond      = struct('BBGname',{}, 'settleDate',{}, 'expDate',{}, ...
                    'firstCouponDate',{}, 'couponValue',{}, 'couponFrequency',{}, ...
                    'pricesDates',{}, 'pricesCleanValues',{}, 'pricesDirtyValues',{});
 nKept     = 0;
+% Vogliamo solo i numeri, le prime due righe non ci servono
 priceRows = data(3:end, :);
 
-% Clean remaining text cells (like '#N/A') by forcing them to NaN to prevent cell2mat crashes
+% Clean remaining text cells by forcing them to NaN to avoid crash
 isNonNumeric = ~cellfun(@isnumeric, priceRows);
 priceRows(isNonNumeric) = {NaN};
 
+% Iniziamo a leggere il foglio dalla riga 3
 for r = 3:size(info, 1)
+    % Prendiamo il nome del bond, usando la mappa creata prima, guarda la
+    % prima colonna del foglio info
     bbg = info{r, 1};
-    if ~ischar(bbg) || isempty(bbg), continue; end
+    % Se la cella è vuota o non esiste il nome nella mappa saltiamo
+    if ~ischar(bbg) || isempty(bbg) 
+        continue; 
+    end
     bbg = strtrim(bbg);
-    if ~isKey(dataMap, bbg), continue; end
+    if ~isKey(dataMap, bbg)
+        continue; 
+    end
     
     sc         = dataMap(bbg);
     settleDate = datenum(info{r, 2}, 'dd/mm/yyyy');

@@ -25,34 +25,42 @@ data = readcell(filename, 'Sheet', 'Data');
 
 EXCEL_BASE = datenum('30/12/1899', 'dd/mm/yyyy');
 
-% Stiamo verificando come sono importate le date da e
+% Stiamo verificando come sono importate le date da excel, e voglia
+% rimpiazzare i buchi o cose strane con i NaN, se presenti
 isDT = cellfun(@isdatetime, data);
 data(isDT) = cellfun(@(x) datenum(x), data(isDT), 'UniformOutput', false);
 isInvalid  = cellfun(@(x) (~isnumeric(x) && ~ischar(x)) || (isnumeric(x) && isempty(x)), data);
 data(isInvalid) = {NaN};
 
-% Detect stride and build bond-column map based on 'PX_DIRTY_MID' presence
+% Serve per vedere quante colonne vuote ci sono tra un bond e l'altro
 hasDirty = any(cellfun(@(x) ischar(x) && strcmpi(strtrim(x), 'PX_DIRTY_MID'), data(2,:)));
 stride   = 3 + hasDirty;
 
+% Costruisce una mappa dei bond, molto utile per trovare rapidamente il bond
 dataMap = containers.Map();
 for c = 1:stride:size(data, 2)
     name = data{1, c};
-    if ~ischar(name) || isempty(name), break; end
+    if ~ischar(name) || isempty(name) 
+        break; 
+    end
     dataMap(strtrim(name)) = c;
 end
 
+% Iniziamo a costruire la struct
 bond      = struct('BBGname',{}, 'settleDate',{}, 'expDate',{}, ...
                    'firstCouponDate',{}, 'couponValue',{}, 'couponFrequency',{}, ...
                    'pricesDates',{}, 'pricesCleanValues',{}, 'pricesDirtyValues',{});
 nKept     = 0;
+% Vogliamo solo i numeri, le prime due righe non ci servono
 priceRows = data(3:end, :);
 
-% Clean remaining text cells (like '#N/A') by forcing them to NaN to prevent cell2mat crashes
+% Clean remaining text cells by forcing them to NaN to avoid crash
 isNonNumeric = ~cellfun(@isnumeric, priceRows);
 priceRows(isNonNumeric) = {NaN};
 
+% Iniziamo a leggere il foglio dalla riga 3
 for r = 3:size(info, 1)
+    % Prendiamo il nome del bond, usando la mappa creata pri
     bbg = info{r, 1};
     if ~ischar(bbg) || isempty(bbg), continue; end
     bbg = strtrim(bbg);

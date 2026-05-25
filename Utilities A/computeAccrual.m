@@ -1,30 +1,33 @@
-function ai = computeAccrual(dates, firstCpnDate, cpnValue, cpnFreq)
-% COMPUTEACCRUAL Calculates the accrued interest using the 30/360 European convention.
+function ai = computeAccrual(settle, firstCpnDate, cpnValue, cpnFreq)
 %
 % INPUTS:
-%   dates        - Vector of market trade dates (datenum).
-%   firstCpnDate - Date of the bond's very first coupon (datenum).
-%   cpnValue     - Annual coupon value (e.g., 4 for 4%).
-%   cpnFreq      - Coupon payments per year (e.g., 2 for semi-annual).
+%   settle       - Settlement dates of the trade 
+%   firstCpnDate - Date of the bond's very first coupon 
+%   cpnValue     - Annual coupon value 
+%   cpnFreq      - Coupon payments per year 
 %
 % OUTPUT:
 %   ai           - Vector of calculated accrued interest values.
 
-% Apply the T+2 settlement rule. By shifting the dates, some might 
-% land on a weekend (1=Sunday, 7=Saturday). If so, we adjust them 
-% by adding 2 more days to reach the next business days
-settle = dates; % + 2; 
-%wd = weekday(settle); 
-%settle(wd == 1 | wd == 7) = settle(wd == 1 | wd == 7) + 2;
+monthsPerPeriod = 12 / cpnFreq;
+settle = settle(:); 
 
-% Calculate the total time passed since the first coupon and the duration 
-% of a single period in years. This allows us to compute the fraction 
-% of a year passed since the last coupon
-totalYears = yearfrac(firstCpnDate, settle, 6);
-periodYears = 1 / cpnFreq;
-fracPassed = mod(totalYears, periodYears);
+% Generate coupon dates covering all settle dates.
+% We need to ensure coverage in both directions (past and future) 
+% relative to the very first coupon date.
+kMin = floor((min(settle) - firstCpnDate) / (365.25/cpnFreq)) - 2;
+kMax = ceil((max(settle)  - firstCpnDate) / (365.25/cpnFreq)) + 2;
 
-% Actual accrued interest calculation
-ai = cpnValue .* fracPassed;
+% Create the grid of exact coupon dates
+cpnDates = datemnth(firstCpnDate, (kMin:kMax)' * monthsPerPeriod);
+
+% Discretize returns the index 'i' for each settle date such that:
+% cpnDates(i) <= settle < cpnDates(i+1)
+idx     = discretize(settle, cpnDates);
+prevCpn = cpnDates(idx);
+nextCpn = cpnDates(idx + 1);
+
+% Accrued interest calculation (Actual/Actual ICMA convention)
+ai = (cpnValue / cpnFreq) * (settle - prevCpn) ./ (nextCpn - prevCpn);
 
 end

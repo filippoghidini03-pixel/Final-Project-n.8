@@ -52,14 +52,12 @@ s = [ ...
   16.92, 15.14, 17.36, 19.58, 21.80, 24.02, 26.24 ];
 nDates = length(EONIA);
 % Genera numeri casuali (es. spread tra 10 e 150 basis points) lunghi quanto T
-s = 10 + 140 * rand(size(T))/100; 
+% Pre-allochiamo il vettore per la massima velocità
 
-% Ora puoi testare la funzione in sicurezza
-[tau_star, L_star] = fitBrokenLine(T, s);
-T = zeros(nDates, 1); % Pre-allochiamo il vettore per la massima velocità
 
 for i = 1 : nDates
     % Entra nel giorno 'i', va nel vettore 'Dates' e prende solo la riga 1
     T(i) = EONIA(i).Dates(1); 
 end
+s = 10 + 140 * rand(size(T))/100; 
 [tau_star, L_star] = fitBrokenLine(T, s)

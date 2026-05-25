@@ -2,9 +2,9 @@ function ai = computeAccrual(settle, firstCpnDate, cpnValue, cpnFreq)
 %
 % INPUTS:
 %   settle       - Settlement dates of the trade 
-%   firstCpnDate - Date of the bond's very first coupon 
-%   cpnValue     - Annual coupon value 
-%   cpnFreq      - Coupon payments per year 
+%   firstCpnDate - Date of the bond's very first coupon (datenum or datetime).
+%   cpnValue     - Annual coupon value (e.g., 0.04 for 4%).
+%   cpnFreq      - Coupon payments per year (e.g., 2 for semi-annual).
 %
 % OUTPUT:
 %   ai           - Vector of calculated accrued interest values.

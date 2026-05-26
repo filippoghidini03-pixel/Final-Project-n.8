@@ -34,7 +34,7 @@ fprintf('BONOs kept: %d\n', length(bond_BON));
 fprintf('=== PART A.4: Saving results ===\n');
 save('Part_A.mat', 'EONIA', 'bond_BTP', 'bond_BON');
 fprintf('=== Part A Complete ===\n');
-vector=bond_BTP(end-1).pricesDirtyValues;
+vector=bond_BTP(end-1).pricesDates;
 %% PART C
 % Prov per la parte C
 

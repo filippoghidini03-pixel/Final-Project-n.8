@@ -1,14 +1,4 @@
 function [SpreadsFilt, datesFilt] = filterMonths(Spreads, eon_t0, threshold, spikeThresh)
-% FILTERMONTHS Filters out spikes and removes months with low 10Y spreads.
-%
-% This function performs a two-step cleaning process on the bond spreads:
-%   1. Spike Filter: Analyzes the time series of each individual bond and 
-%      replaces isolated jumps exceeding a specified threshold with the 
-%      average of adjacent days.
-%   2. Monthly Filter: Calculates the monthly average of the 10-year bond
-%      spread (the longest maturity, assumed to be the last element of the 
-%      daily vector). It discards all data for months where this average 
-%      falls below a specified threshold.
 %
 % INPUTS:
 %   Spreads     - Struct array of length nDays containing bond data. 

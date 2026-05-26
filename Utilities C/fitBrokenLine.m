@@ -26,7 +26,7 @@ for k = 3 : n-3
     Lk = sum((s(1:k)     - XL*bL).^2) + ...
          sum((s(k+1:end) - XR*bR).^2);
 
-    % Skip if not a new minimum (footnote 16)
+    % Skip if not a new minimum 
     if Lk >= L_min, continue; end
 
     % Check if the two lines intersect inside [T(k), T(k+1))

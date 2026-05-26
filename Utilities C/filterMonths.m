@@ -20,9 +20,7 @@ nDays       = length(Spreads);
 uniqueBonds = unique(vertcat(Spreads.ExpiryDates));
 nBonds      = length(uniqueBonds);
 
-% =========================================================================
 % STEP 1: Build [nDays x nBonds] matrix, filter column-wise, put back
-% =========================================================================
 spreadMat = nan(nDays, nBonds);
 posMat    = zeros(nDays, nBonds);
 
@@ -49,9 +47,7 @@ for i = 1:nDays
     Spreads(i).ASWSpreads(posMat(i, ok)) = spreadMat(i, ok);
 end
 
-% =========================================================================
-% STEP 2: Month filter (Based ONLY on the 10-year bond)
-% =========================================================================
+% STEP 2: Month filter 
 % Create a local vector of dates directly from the input vector
 dates = eon_t0(:);
 dv    = datevec(dates);

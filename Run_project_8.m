@@ -54,21 +54,21 @@ fprintf('\n=== PART C: Data Filtering and Broken Line Fitting ===\n');
 % Estraiamo il vettore dei t0 di riferimento da EONIA
 eon_t0 = arrayfun(@(x) x.Dates(1), EONIA);
 
-% 1. DATA FILTERING (Il patch ora agisce internamente alla funzione)
+% 1. DATA FILTERING (Restituisce sia la struct che il vettore date filtrati)
 fprintf('Filtering BTP spreads...\n');
-Spreads_BTP_filt = filterMonths(Spreads_BTP, eon_t0, 20, 50);
+[Spreads_BTP_filt, dates_BTP] = filterMonths(Spreads_BTP, eon_t0, 20, 50);
 
 fprintf('Filtering BONO spreads...\n');
-Spreads_BON_filt = filterMonths(Spreads_BON, eon_t0, 20, 50);
+[Spreads_BON_filt, dates_BON] = filterMonths(Spreads_BON, eon_t0, 20, 50);
 
-% 2. TIME-SERIES BROKEN LINE FITTING (Tramite la nuova funzione dedicata)
+% 2. TIME-SERIES BROKEN LINE FITTING (Passiamo sia la struct che il vettore date)
 fprintf('Fitting Broken Line for BTPs...\n');
-[tau_star_BTP, L_star_BTP, dates_BTP] = computeBrokenLineEvolution(Spreads_BTP_filt);
+[tau_star_BTP, L_star_BTP] = computeBrokenLineEvolution(Spreads_BTP_filt, dates_BTP);
 
 fprintf('Fitting Broken Line for BONOs...\n');
-[tau_star_BON, L_star_BON, dates_BON] = computeBrokenLineEvolution(Spreads_BON_filt);
+[tau_star_BON, L_star_BON] = computeBrokenLineEvolution(Spreads_BON_filt, dates_BON);
 
-% 3. PLOTTING (Grafica finale isolata)
+% 3. PLOTTING (Rimane identica, usa già i vettori delle date)
 fprintf('Plotting results...\n');
 plotBreakpointEvolution(dates_BTP, tau_star_BTP, dates_BON, tau_star_BON);
 

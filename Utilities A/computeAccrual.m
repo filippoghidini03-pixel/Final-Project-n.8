@@ -14,7 +14,8 @@ settle = settle(:);
 
 % Generate coupon dates covering all settle dates.
 % We need to ensure coverage in both directions
-% relative to the very first coupon date.
+% relative to the very first coupon date
+% We use an approximation for the leap year
 kMin = floor((min(settle) - firstCpnDate) / (365.25/cpnFreq)) - 2;
 kMax = ceil((max(settle)  - firstCpnDate) / (365.25/cpnFreq)) + 2;
 

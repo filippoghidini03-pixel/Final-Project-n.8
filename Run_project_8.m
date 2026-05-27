@@ -1,17 +1,18 @@
 %% Run_project_8.m
 % Main script for Project 8 
-clear; 
+clear all; 
 close all; 
 clc;
 
 addpath('Data')
 addpath('Utilities A')
+addpath('Utilities B')
 addpath('Utilities C')
 %% GLOBAL PARAMETERS INITIALIZATION
 param = initParameters();
 
 %% PART A
-%  A.1: Read OIS data and bootstrap EONIA curve
+% Part A.1: Read OIS data and bootstrap EONIA curve
 fprintf('=== PART A.1: Reading OIS data & Bootstrapping EONIA curve ===\n');
 OIS_raw = readOISdata(param.fileOIS, param.t1, param.tN, param.maxTenorYears);
 fprintf('Read %d business days of OIS rates.\n', length(OIS_raw));
@@ -35,29 +36,35 @@ fprintf('=== PART A.4: Saving results ===\n');
 save('Part_A.mat', 'EONIA', 'bond_BTP', 'bond_BON');
 fprintf('=== Part A Complete ===\n');
 vector=bond_BTP(end-1).pricesDates;
+
+%% PART B
+% Part B.1-B.2: Compute ASW spread and Zeta spread over EONIA for each bond/date
+fprintf('\n=== PART B: Computing ASW and Zeta spreads ===\n');
+
+[Spreads_BTP, Spreads_BON] = computeASWspreads(EONIA, bond_BTP, bond_BON);
+
+% Part B.3: Save results
+fprintf('=== PART B: Saving spread results ===\n');
+save('project8_spreads.mat', 'Spreads_BTP', 'Spreads_BON');
+fprintf('Saved to project8_spreads.mat\n\n=== Part B Complete ===\n');
+
 %% PART C
-% Prov per la parte C
+fprintf('\n=== PART C: Data Filtering and Broken Line Fitting ===\n');
 
-s = [ ...
-  12.34, 15.67, 18.91, 14.22, 11.45, 19.88, 21.34, 17.56, 13.78, 16.90, ...
-  20.11, 22.45, 18.67, 14.89, 12.01, 15.23, 17.45, 19.67, 21.89, 23.10, ...
-  16.32, 14.54, 13.76, 15.98, 18.20, 20.42, 22.64, 24.86, 19.08, 17.30, ...
-  15.52, 13.74, 11.96, 14.18, 16.40, 18.62, 20.84, 23.06, 25.28, 21.50, ...
-  19.72, 17.94, 16.16, 14.38, 12.60, 10.82, 13.04, 15.26, 17.48, 19.70, ...
-  21.92, 24.14, 26.36, 22.58, 20.80, 19.02, 17.24, 15.46, 13.68, 11.90, ...
-  14.12, 16.34, 18.56, 20.78, 23.00, 25.22, 27.44, 23.66, 21.88, 20.10, ...
-  18.32, 16.54, 14.76, 12.98, 15.20, 17.42, 19.64, 21.86, 24.08, 26.30, ...
-  28.52, 24.74, 22.96, 21.18, 19.40, 17.62, 15.84, 14.06, 16.28, 18.50, ...
-  20.72, 22.94, 25.16, 27.38, 29.60, 25.82, 24.04, 22.26, 20.48, 18.70, ...
-  16.92, 15.14, 17.36, 19.58, 21.80, 24.02, 26.24 ];
-nDates = length(EONIA);
-% Genera numeri casuali (es. spread tra 10 e 150 basis points) lunghi quanto T
-% Pre-allochiamo il vettore per la massima velocità
+% Part C.1: Filtering the data
+eon_t0 = arrayfun(@(x) x.Dates(1), EONIA);
+fprintf('Filtering BTP spreads...\n');
+[Spreads_BTP_filt, dates_BTP] = filterMonths(Spreads_BTP, eon_t0, 20, 50);
+fprintf('Filtering BONO spreads...\n');
+[Spreads_BON_filt, dates_BON] = filterMonths(Spreads_BON, eon_t0, 20, 50);
 
+% Part C.2: Best fit of the ASW with a straight line broken 
+fprintf('Fitting Broken Line for BTPs\n');
+[tau_star_BTP, L_star_BTP] = computeBrokenLineEvolution(Spreads_BTP_filt, dates_BTP);
 
-for i = 1 : nDates
-    % Entra nel giorno 'i', va nel vettore 'Dates' e prende solo la riga 1
-    T(i) = EONIA(i).Dates(1); 
-end
-s = 10 + 140 * rand(size(T))/100; 
-[tau_star, L_star] = fitBrokenLine(T, s)
+fprintf('Fitting Broken Line for BONOs\n');
+[tau_star_BON, L_star_BON] = computeBrokenLineEvolution(Spreads_BON_filt, dates_BON);
+
+% Plotting: we can delete this
+plotBreakpointEvolution(dates_BTP, tau_star_BTP, dates_BON, tau_star_BON);
+fprintf('=== Part C Complete ===\n');

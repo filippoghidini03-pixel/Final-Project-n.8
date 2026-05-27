@@ -1,11 +1,18 @@
 function [tau_star, L_star] = fitBrokenLine(T, s)
-% Segmented regression with one breakpoint (Baviera & Lebovitz)
-% T : bond expiries, sorted ascending [n x 1]
-% s : ASW spreads                     [n x 1]
-% tau_star : optimal breakpoint
-% L_star   : minimum residual sum of squares
+%
+% INPUTS:
+%   T        - Vector of bond residual maturities/expiries [n x 1]. 
+%              Must be sorted in strictly ascending order.
+%   s        - Vector of observed spreads  [n x 1] 
+%              corresponding to the maturities in T.
+%
+% OUTPUTS:
+%   tau_star - The optimal breakpoint that minimizes the 
+%              overall residual sum of squares.
+%   L_star   - The minimum residual sum of squares achieved at tau_star.
+%
 
-% Force column vectors — this is the main fix if inputs are row vectors
+% Force column vectors 
 T = T(:);
 s = s(:);
 n = length(T);
@@ -15,7 +22,6 @@ L_candidates   = inf(n, 1);
 L_min          = inf;
 
 for k = 3 : n-3
-
     % Independent OLS on left segment [1..k] and right segment [k+1..n]
     XL = [ones(k,   1), T(1:k)];
     XR = [ones(n-k, 1), T(k+1:end)];
@@ -23,11 +29,12 @@ for k = 3 : n-3
     bL = XL \ s(1:k);
     bR = XR \ s(k+1:end);
 
-    Lk = sum((s(1:k)     - XL*bL).^2) + ...
-         sum((s(k+1:end) - XR*bR).^2);
+    Lk = sum((s(1:k)     - XL*bL).^2) + sum((s(k+1:end) - XR*bR).^2);
 
-    % Skip if not a new minimum (footnote 16)
-    if Lk >= L_min, continue; end
+    % Skip if not a new minimum 
+    if Lk >= L_min 
+        continue; 
+    end
 
     % Check if the two lines intersect inside [T(k), T(k+1))
     a1 = bL(1); b1 = bL(2);

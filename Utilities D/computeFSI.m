@@ -28,7 +28,7 @@ for m = 1 : M
         % Period of relative quiet: Green forced, no further test
 
     elseif sp_mean > SPREAD_RED && ...
-           maxConsecutiveNegative(slope(m).dailySign) > CONSEC_NEG_DAYS
+           maxConsecutiveNegative(slope(m).dailySign) >= CONSEC_NEG_DAYS
         FSI(m).value = 2;
         FSI(m).color = 'Red';
 

@@ -9,8 +9,7 @@ CONSEC_NEG_DAYS = 5;     % consecutive negative slope days
 M   = length(months);
 FSI = struct('month', cell(M,1), 'value', cell(M,1), 'color', cell(M,1));
 
-lastGreenStartSpread = NaN;
-
+lastGreenStartSpread = spread(1).startVal;
 for m = 1 : M
 
     FSI(m).month = months(m);

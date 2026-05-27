@@ -45,35 +45,29 @@ fprintf('=== Part B Complete ===\n\n');
 
 %% PART C
 fprintf('=== PART C: Segmented regression on ASW spreads ===\n');
-
-% Extract EONIA settlement dates (one per business day)
+ 
 nDates = length(EONIA);
 eon_t0 = arrayfun(@(x) x.Dates(1), EONIA);
-
-% --- C.1: Filter out "quiet" months (monthly avg ASW spread < 20 bps) ---
-% Aggregate daily spreads by month for Italy and Spain
+ 
 [months_IT, slope_IT, time_IT, spread_IT] = aggregateMonthly(eon_t0, Spreads_BTP);
 [months_ES, slope_ES, time_ES, spread_ES] = aggregateMonthly(eon_t0, Spreads_BON);
-
+ 
 fprintf('=== PART C: Saving results ===\n');
 save('Part_C.mat', 'months_IT', 'slope_IT', 'time_IT', 'spread_IT', ...
                    'months_ES', 'slope_ES', 'time_ES', 'spread_ES');
 fprintf('=== Part C Complete ===\n\n');
-
-%% PART D — Financial Stress Index
+ 
+% PART D — Financial Stress Index
 fprintf('=== PART D: Computing Financial Stress Index ===\n');
 [FSI_euro, FSI_italy, FSI_spain] = computeEuroFSI( ...
     months_IT, slope_IT, time_IT, spread_IT, ...
     months_ES, slope_ES, time_ES, spread_ES);
-
+ 
 fprintf('=== PART D: Plotting FSI ===\n');
 plotFSI(FSI_italy, FSI_spain, FSI_euro);
-
+ 
 fprintf('=== PART D: Saving results ===\n');
 save('Part_D.mat', 'FSI_euro', 'FSI_italy', 'FSI_spain');
 fprintf('=== Part D Complete ===\n\n');
-
+ 
 fprintf('=== PROJECT 8 COMPLETE ===\n');
-
-
-

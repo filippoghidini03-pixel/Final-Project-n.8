@@ -7,7 +7,7 @@ function [tau_star, L_star] = fitBrokenLine(T, s)
 %              corresponding to the maturities in T.
 %
 % OUTPUTS:
-%   tau_star - The optimal breakpoint (x-axis value) that minimizes the 
+%   tau_star - The optimal breakpoint that minimizes the 
 %              overall residual sum of squares.
 %   L_star   - The minimum residual sum of squares achieved at tau_star.
 %

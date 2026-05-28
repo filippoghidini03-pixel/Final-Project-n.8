@@ -40,7 +40,10 @@ for row = 1:3
     end
 
     plot(sp_dates, sp_vals, 'k-', 'LineWidth',1, 'HandleVisibility','off');
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     xlim([x1(1), x2(end)]);
     ylim([ymin ymax]);
     set(gca, 'XTick', yearTicks);

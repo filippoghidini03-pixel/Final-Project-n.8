@@ -14,12 +14,13 @@ tau_star = nan(nDays, 1);
 L_star   = nan(nDays, 1);
 
 for i = 1:nDays
-    t0      = datesFilt(i); % Uses the standalone vector directly
-    T_dates = SpreadsFilt(i).ExpiryDates;
+    % Uses the standalone vector directly
+    t0      = datesFilt(i); 
+    T_dates = SpreadsFilt(i).ExpiryDates; 
     s       = SpreadsFilt(i).ASWSpreads;
     
     % Calculate residual maturity in years
-    tau = (T_dates - t0) / 365.25; 
+    tau = (T_dates - t0)/365.25;  
     
     % Sort by ascending maturities (required by fitBrokenLine)
     [tau_sorted, sortIdx] = sort(tau);
@@ -32,5 +33,4 @@ for i = 1:nDays
         L_star(i)   = Ls;
     end
 end
-
 end

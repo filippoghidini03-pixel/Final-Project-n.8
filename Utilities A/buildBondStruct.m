@@ -79,15 +79,15 @@ for r = 3:size(info, 1)
     cpnValue   = info{r, 6};
     cpnFreq    = info{r, 7};
     
-    % Extract full columns as numeric arrays [vectorized]
+    % Extract full columns as numeric arrays 
     dArr  = cell2mat(priceRows(:, sc));
     clArr = cell2mat(priceRows(:, sc + 1));
     
-    % Convert Excel serials to Matlab datenums [vectorized]
+    % Convert Excel serials to Matlab datenums 
     mask = ~isnan(dArr) & dArr < 50000;
     dArr(mask) = dArr(mask) + EXCEL_BASE;
     
-    % Keep only valid observations strictly within [t1, tN] [vectorized]
+    % Keep only valid observations strictly within [t1, tN] 
     valid = ~isnan(dArr) & ~isnan(clArr) & dArr >= t1 & dArr <= tN;
     
     dates       = dArr(valid);
@@ -99,7 +99,7 @@ for r = 3:size(info, 1)
     [dates, idx] = sort(dates);
     cleanPrices  = cleanPrices(idx);
     
-    % Dirty = clean + accrued [vectorized inside] 
+    % Dirty = clean + accrued  
     % Passing firstCpn perfectly integrates with the math-based computeAccrual
     
     dirtyPrices = cleanPrices + computeAccrual(dates, firstCpn, cpnValue, cpnFreq);

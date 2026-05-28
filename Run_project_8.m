@@ -1,5 +1,7 @@
 %% Run_project_8.m
-clear all; close all; clc;
+clear all; 
+close all; 
+clc;
 
 addpath('Data')
 addpath('Utilities A')

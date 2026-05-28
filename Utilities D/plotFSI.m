@@ -39,11 +39,8 @@ for row = 1:3
               'HandleVisibility','off');
     end
 
-    plot(sp_dates, sp_vals, 'k-', 'LineWidth',1, 'HandleVisibility','off');
-<<<<<<< Updated upstream
+    plot(sp_dates, sp_vals, 'k-', 'LineWidth', 1, 'HandleVisibility','off');
 
-=======
->>>>>>> Stashed changes
     xlim([x1(1), x2(end)]);
     ylim([ymin ymax]);
     set(gca, 'XTick', yearTicks);
@@ -54,7 +51,6 @@ for row = 1:3
     hold off;
 end
 
-% Legend on Italy subplot only
 subplot(3, 1, 1);
 hold on;
 patch(NaN,NaN,'g','FaceAlpha',0.35,'DisplayName','Green — Open market');

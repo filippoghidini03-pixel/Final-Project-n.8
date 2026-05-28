@@ -1,63 +1,64 @@
-function plotFSI(FSI_italy, FSI_spain, FSI_euro)
-% PLOTFSI  Plot the Financial Stress Index as a colour-coded timeline.
+function plotFSI(FSI_italy, FSI_spain, FSI_euro, dates_BTP, spread10y_BTP, dates_BON, spread10y_BON)
 
-colorRGB = struct('Green',  [0.18 0.63 0.18], ...
-                  'Yellow', [1.00 0.85 0.00], ...
-                  'Red',    [0.85 0.10 0.10]);
+FSI_list   = {FSI_italy, FSI_spain, FSI_euro};
+titles     = {'Italy (BTP)', 'Spain (BONO)', 'Eurozone'};
+colorNames = {'Green', 'Yellow', 'Red'};
+colors     = {'g', 'y', 'r'};
 
-figure('Name', 'Financial Stress Index', 'NumberTitle', 'off', ...
-       'Position', [100 100 1100 300]);
+sp_dates_all = {dates_BTP, dates_BON, [dates_BTP; dates_BON]};
+sp_vals_all  = {spread10y_BTP, spread10y_BON, [spread10y_BTP; spread10y_BON]};
 
-labels   = {'ITALY', 'SPAIN', 'EUROZONE'};
-FSI_list = {FSI_italy, FSI_spain, FSI_euro};
-nRows    = 3;
+dv        = datevec([FSI_italy.month]');
+yearTicks = datenum(unique(dv(:,1)), 1, 1);
 
-for row = 1 : nRows
-    FSI = FSI_list{row};
-    M   = length(FSI);
+figure('Name', 'Financial Stress Index', 'Position', [100 50 1200 700]);
 
-    for m = 1 : M
-        x1  = FSI(m).month;
-        % Width = days until next month (or 30 for last)
-        if m < M
-            x2 = FSI(m+1).month;
-        else
-            x2 = x1 + 30;
-        end
+for row = 1:3
+    subplot(3, 1, row);
+    hold on;
 
-        col = colorRGB.(FSI(m).color);
-        % Draw filled rectangle for this month
-        patch([x1 x2 x2 x1], ...
-              [row-1 row-1 row row], ...
-              col, 'EdgeColor', 'none');
-        hold on;
+    FSI      = FSI_list{row};
+    x1       = [FSI.month]';
+    x2       = [x1(2:end); x1(end)+31];
+    sp_dates = sp_dates_all{row};
+    sp_vals  = sp_vals_all{row};
+
+    [sp_dates, idx] = sort(sp_dates);
+    sp_vals = sp_vals(idx);
+
+    valid = sp_vals(~isnan(sp_vals));
+    ymin  = min(0,   min(valid));
+    ymax  = max(100, max(valid));
+
+    for c = 1:3
+        mask = strcmp({FSI.color}, colorNames{c});
+        if ~any(mask), continue; end
+        Xp = [x1(mask)'; x2(mask)'; x2(mask)'; x1(mask)'];
+        Yp = repmat([ymin; ymin; ymax; ymax], 1, sum(mask));
+        patch(Xp, Yp, colors{c}, 'EdgeColor','none', 'FaceAlpha',0.35, ...
+              'HandleVisibility','off');
     end
+
+    plot(sp_dates, sp_vals, 'k-', 'LineWidth',1, 'HandleVisibility','off');
+
+    xlim([x1(1), x2(end)]);
+    ylim([ymin ymax]);
+    set(gca, 'XTick', yearTicks);
+    datetick('x', 'yyyy', 'keepticks');
+    ylabel('[bps]');
+    title(titles{row});
+    grid on;
+    hold off;
 end
 
-% Axes formatting 
-xlim([FSI_italy(1).month, FSI_italy(end).month + 30]);
-ylim([0, nRows]);
-set(gca, 'YTick', 0.5:1:nRows-0.5, 'YTickLabel', fliplr(labels));
-
-% X-axis: yearly ticks
-allMonths = [FSI_italy.month];
-years = unique(year(datetime(datevec(allMonths))));
-yearTicks = datenum(years, 1, 1);
-set(gca, 'XTick', yearTicks);
-datetick('x', 'yyyy', 'keepticks');
-
-% Grid
-set(gca, 'XGrid', 'on', 'GridAlpha', 0.3);
-
-title('Financial Stress Index — Eurozone (ASW spread)');
-xlabel('Date');
-
-% Legend
-patch(NaN, NaN, colorRGB.Green,  'DisplayName', 'Green (0) — Open market');
-patch(NaN, NaN, colorRGB.Yellow, 'DisplayName', 'Yellow (1) — Dysfunctional');
-patch(NaN, NaN, colorRGB.Red,    'DisplayName', 'Red (2) — Severe disruption');
-legend('Location', 'southoutside', 'Orientation', 'horizontal');
-
+% Legend on Italy subplot only
+subplot(3, 1, 1);
+hold on;
+patch(NaN,NaN,'g','FaceAlpha',0.35,'DisplayName','Green — Open market');
+patch(NaN,NaN,'y','FaceAlpha',0.35,'DisplayName','Yellow — Dysfunctional');
+patch(NaN,NaN,'r','FaceAlpha',0.35,'DisplayName','Red — Severe disruption');
+plot(NaN,NaN,'k-','DisplayName','10y ASW spread');
+legend('Location','northwest','FontSize',8);
 hold off;
 
-end 
+end

@@ -1,6 +1,5 @@
 %% Run_project_8.m
 % Main script for Project 8
-tic
 clear all; 
 close all; 
 clc;
@@ -70,18 +69,18 @@ fprintf('Fitting Broken Line for BONOs\n');
 % Plotting: we can delete this
 plotBreakpointEvolution(dates_BTP, tau_star_BTP, dates_BON, tau_star_BON);
 fprintf('=== Part C Complete ===\n');
-%% PART D — Financial Stress Index
+%% PART D
 fprintf('=== PART D: Computing Financial Stress Index ===\n');
-[FSI_euro, FSI_italy, FSI_spain] = computeEuroFSI( ...
-    months_IT, slope_IT, time_IT, spread_IT, ...
-    months_ES, slope_ES, time_ES, spread_ES);
- 
-fprintf('=== PART D: Plotting FSI ===\n');
-plotFSI(FSI_italy, FSI_spain, FSI_euro);
- 
-fprintf('=== PART D: Saving results ===\n');
+
+[slopeSign_BTP, spread10y_BTP] = computeSlopeAndSpread(Spreads_BTP_filt, dates_BTP, tau_star_BTP);
+[slopeSign_BON, spread10y_BON] = computeSlopeAndSpread(Spreads_BON_filt, dates_BON, tau_star_BON);
+
+[months_IT, slope_IT, time_IT, spread_IT] = buildMonthlyIndicators(eon_t0, dates_BTP, tau_star_BTP, slopeSign_BTP, spread10y_BTP);
+[months_ES, slope_ES, time_ES, spread_ES] = buildMonthlyIndicators(eon_t0, dates_BON, tau_star_BON, slopeSign_BON, spread10y_BON);
+
+[FSI_euro, FSI_italy, FSI_spain] = computeEuroFSI(months_IT, slope_IT, time_IT, spread_IT, months_ES, slope_ES, time_ES, spread_ES);
+
+plotFSI(FSI_italy, FSI_spain, FSI_euro, dates_BTP, spread10y_BTP, dates_BON, spread10y_BON);
+
 save('Part_D.mat', 'FSI_euro', 'FSI_italy', 'FSI_spain');
-fprintf('=== Part D Complete ===\n\n');
- 
-fprintf('=== PROJECT 8 COMPLETE ===\n');
-tempo=toc
+fprintf('=== Part D Complete ===\n');

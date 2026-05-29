@@ -1,4 +1,6 @@
-function [slopeSign, spread10y] = computeSlopeAndSpread(SpreadsFilt, datesFilt, tau_star)
+function [slopeSign, spread10y] = computeSlopeAndSpread(SpreadsFilt, datesFilt, tau_star, spreadField)
+
+if nargin < 4, spreadField = 'ASWSpreads'; end
 
 nDays     = length(SpreadsFilt);
 slopeSign = ones(nDays, 1);
@@ -8,7 +10,7 @@ for i = 1:nDays
     if isnan(tau_star(i)) || isinf(tau_star(i)), continue; end
 
     T_dates = SpreadsFilt(i).ExpiryDates(:);
-    s       = SpreadsFilt(i).ASWSpreads(:);
+    s       = SpreadsFilt(i).(spreadField)(:);
     tau     = (T_dates - datesFilt(i)) / 365.25;
 
     [tau, idx] = sort(tau);
@@ -27,7 +29,6 @@ for i = 1:nDays
         ts = tau(end);
     end
 
-    % Evaluate at 10y but do not extrapolate beyond available data
     eval_point = min(10, max(tau));
 
     if eval_point <= ts
@@ -36,7 +37,6 @@ for i = 1:nDays
         spread10y(i) = polyval(pR, eval_point);
     end
 
-    % Slope sign: inverted if s(0.5y) > s(10y)
     if 0.5 <= ts
         s_short = polyval(pL, 0.5);
     else

@@ -1,4 +1,6 @@
-function plotFSI(FSI_italy, FSI_spain, FSI_euro, dates_BTP, spread10y_BTP, dates_BON, spread10y_BON)
+function plotFSI(FSI_italy, FSI_spain, FSI_euro, dates_BTP, spread10y_BTP, dates_BON, spread10y_BON, spreadName)
+
+if nargin < 8, spreadName = 'ASW'; end
 
 FSI_list   = {FSI_italy, FSI_spain, FSI_euro};
 titles     = {'Italy (BTP)', 'Spain (BONO)', 'Eurozone'};
@@ -11,7 +13,7 @@ sp_vals_all  = {spread10y_BTP, spread10y_BON, [spread10y_BTP; spread10y_BON]};
 dv        = datevec([FSI_italy.month]');
 yearTicks = datenum(unique(dv(:,1)), 1, 1);
 
-figure('Name', 'Financial Stress Index', 'Position', [100 50 1200 700]);
+figure('Name', ['Financial Stress Index — ' spreadName], 'Position', [100 50 1200 700]);
 
 for row = 1:3
     subplot(3, 1, row);
@@ -46,7 +48,7 @@ for row = 1:3
     set(gca, 'XTick', yearTicks);
     datetick('x', 'yyyy', 'keepticks');
     ylabel('[bps]');
-    title(titles{row});
+    title([titles{row} ' — ' spreadName]);
     grid on;
     hold off;
 end
@@ -56,8 +58,7 @@ hold on;
 patch(NaN,NaN,'g','FaceAlpha',0.35,'DisplayName','Green — Open market');
 patch(NaN,NaN,'y','FaceAlpha',0.35,'DisplayName','Yellow — Dysfunctional');
 patch(NaN,NaN,'r','FaceAlpha',0.35,'DisplayName','Red — Severe disruption');
-plot(NaN,NaN,'k-','DisplayName','10y ASW spread');
+plot(NaN,NaN,'k-','DisplayName',['10y ' spreadName ' spread']);
 legend('Location','northwest','FontSize',8);
 hold off;
-
 end

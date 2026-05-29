@@ -56,8 +56,9 @@ ym    = dv(:,1) * 100 + dv(:,2);
 % Extract ONLY the last spread (10Y maturity) for each business day
 spreads10Y = nan(nDays, 1);
 for i = 1:nDays
-    if ~isempty(Spreads(i).ASWSpreads)
-        spreads10Y(i) = Spreads(i).ASWSpreads(end);
+    if ~isempty(Spreads(i).ASWSpreads) && ~isempty(Spreads(i).ExpiryDates)
+        [~, maxIdx] = max(Spreads(i).ExpiryDates);
+        spreads10Y(i) = Spreads(i).ASWSpreads(maxIdx);
     end
 end
 

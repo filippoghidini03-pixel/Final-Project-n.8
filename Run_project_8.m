@@ -52,6 +52,10 @@ fprintf('=== PART D ===\n');
 
 [FSI_euro, FSI_italy, FSI_spain] = computeEuroFSI(months_IT, slope_IT, time_IT, spread_IT, months_ES, slope_ES, time_ES, spread_ES);
 
-plotFSI(FSI_italy, FSI_spain, FSI_euro, dates_BTP, spread10y_BTP, dates_BON, spread10y_BON);
+% Raw 10y spread on ALL days (for plotting)
+spread10y_plot_BTP = computeRawSpread10y(Spreads_BTP);
+spread10y_plot_BON = computeRawSpread10y(Spreads_BON);
+
+plotFSI(FSI_italy, FSI_spain, FSI_euro, eon_t0, spread10y_plot_BTP, eon_t0, spread10y_plot_BON);
 save('Part_D.mat', 'FSI_euro', 'FSI_italy', 'FSI_spain');
 fprintf('=== Part D Complete ===\n');

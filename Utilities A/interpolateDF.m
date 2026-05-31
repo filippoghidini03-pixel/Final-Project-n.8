@@ -26,7 +26,7 @@ zVec    = -log(knownPD(valid)) ./ tauVec;
 zVec(1) = zVec(2);   % stabilise anchor at t0 (avoid divide-by-zero artifacts)
 
 queryDates = queryDates(:);
-tauQ = yearfrac(t0, queryDates, 1);   % Act/365
+tauQ = (queryDates - t0) / 365;   % Act/365
 zQ   = interp1(tauVec, zVec, tauQ, 'linear', 'extrap');
 df   = exp(-zQ .* tauQ);
 df(tauQ <= 0) = 1.0;   % B(t0, t0) = 1 by definition

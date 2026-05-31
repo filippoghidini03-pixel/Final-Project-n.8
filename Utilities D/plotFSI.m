@@ -7,8 +7,8 @@ titles     = {'Italy (BTP)', 'Spain (BONO)', 'Eurozone'};
 colorNames = {'Green', 'Yellow', 'Red'};
 colors     = {'g', 'y', 'r'};
 
-sp_dates_all = {dates_BTP, dates_BON, [dates_BTP; dates_BON]};
-sp_vals_all  = {spread10y_BTP, spread10y_BON, [spread10y_BTP; spread10y_BON]};
+sp_dates_all = {dates_BTP, dates_BON, dates_BTP};
+sp_vals_all  = {spread10y_BTP, spread10y_BON, (spread10y_BTP + spread10y_BON) / 2};
 
 dv        = datevec([FSI_italy.month]');
 yearTicks = datenum(unique(dv(:,1)), 1, 1);
@@ -61,4 +61,5 @@ patch(NaN,NaN,'r','FaceAlpha',0.35,'DisplayName','Red — Severe disruption');
 plot(NaN,NaN,'k-','DisplayName',['10y ' spreadName ' spread']);
 legend('Location','northwest','FontSize',8);
 hold off;
+
 end

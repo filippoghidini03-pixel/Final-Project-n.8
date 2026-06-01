@@ -1,5 +1,4 @@
 %% Run_project_8.m
-tic
 clear all; 
 close all; 
 clc;
@@ -9,6 +8,7 @@ addpath('Utilities A')
 addpath('Utilities B')
 addpath('Utilities C')
 addpath('Utilities D')
+addpath('Other Utilities')
 
 %% PARAMETERS
 param = initParameters();
@@ -82,22 +82,4 @@ plotFSI(FSI_italy_z, FSI_spain_z, FSI_euro_z, eon_t0, spread10y_plot_BTP_z, eon_
 save('Part_E.mat', 'FSI_euro_z', 'FSI_italy_z', 'FSI_spain_z');
 fprintf('=== Part E Complete ===\n');
 %% Comparison ASW vs Zeta spread
-figure('Name', 'ASW vs Zeta Spread', 'Position', [100 50 1200 500]);
-
-subplot(2,1,1);
-plot(dates_BTP, spread10y_BTP, 'b-', 'LineWidth', 1, 'DisplayName', 'ASW');
-hold on;
-plot(dates_BTP_z, spread10y_BTP_z, 'r-', 'LineWidth', 1, 'DisplayName', 'Zeta');
-datetick('x', 'yyyy', 'keepticks');
-ylabel('[bps]'); title('Italy (BTP)');
-legend('Location', 'northwest'); grid on;
-
-subplot(2,1,2);
-plot(dates_BON, spread10y_BON, 'b-', 'LineWidth', 1, 'DisplayName', 'ASW');
-hold on;
-plot(dates_BON_z, spread10y_BON_z, 'r-', 'LineWidth', 1, 'DisplayName', 'Zeta');
-datetick('x', 'yyyy', 'keepticks');
-ylabel('[bps]'); title('Spain (BONO)');
-legend('Location', 'northwest'); 
-grid on;
-tempo=toc
+plotASWvsZeta(dates_BTP, spread10y_BTP, dates_BTP_z, spread10y_BTP_z, dates_BON, spread10y_BON, dates_BON_z, spread10y_BON_z);

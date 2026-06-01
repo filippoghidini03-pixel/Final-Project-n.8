@@ -1,4 +1,5 @@
 %% Run_project_8.m
+tic
 clear all; 
 close all; 
 clc;
@@ -97,4 +98,6 @@ hold on;
 plot(dates_BON_z, spread10y_BON_z, 'r-', 'LineWidth', 1, 'DisplayName', 'Zeta');
 datetick('x', 'yyyy', 'keepticks');
 ylabel('[bps]'); title('Spain (BONO)');
-legend('Location', 'northwest'); grid on;
+legend('Location', 'northwest'); 
+grid on;
+tempo=toc

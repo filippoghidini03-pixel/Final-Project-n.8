@@ -21,17 +21,15 @@ allDatesOut = cell(nDates, 1);
 PDout       = cell(nDates, 1);
 ratesOut    = cell(nDates, 1);
 
-% Inizia ad analizzare dal giorno 1, estrae la data, i tassi e le scadenze
-% in anni
+% Loop over each day to extract the date, rates, and tenors in years
 for i = 1 : nDates
     vd       = OIS_raw(i).valueDate;
     rates    = OIS_raw(i).rates / 100;
     tenorsYr = OIS_raw(i).tenors;
     
     % Use the unified shiftDate function to calculate the settlement date (t0)
-    %t0     = shiftDate(vd, settleLag, 'busdays');
-
-    % Non va shiftato niente perché le date sono già settlement dates
+    % t0     = shiftDate(vd, settleLag, 'busdays');
+    % No shift needed because the provided dates are already settlement dates
     t0 = vd ;
     nKnots = length(tenorsYr);
     
@@ -39,11 +37,11 @@ for i = 1 : nDates
     knotDates = shiftDate(t0, round(tenorsYr * 12), 'months');
     allDates  = [t0; knotDates];
     
-    % Inizializzo un vettore di NaN e forzo il primo discount (cioè quello di t0) a 1
+    % Initialize a vector of NaNs and force the first discount factor (at t0) to 1
     PD    = nan(nKnots + 1, 1);
     PD(1) = 1.0; 
     
-    % Trova gli indici di contartto a breve e lungo termine
+    % Find the indices for short-term and long-term contracts
     idxShort = find(tenorsYr < 0.999);
     idxLong  = find(tenorsYr >= 0.999);
     
@@ -56,13 +54,13 @@ for i = 1 : nDates
     end
     
     % Long tenors (OIS >= 1y): Annual compounding with zero-rate interpolation
-    % Prende il nodo lungo, trova gli anni totali, la data finale e il tasso di questo swap.
+    % For each long node, find the total years, the final date, and the swap rate.
     for ki = idxLong'
         nYears = round(tenorsYr(ki));
         t_i    = knotDates(ki);
         r_i    = rates(ki);
         
-        % Costruisce il calendario dei flussi intermedi
+        % Build the schedule of intermediate payment flows
         payDates      = shiftDate(t0, (1:nYears)' * 12, 'months');
         payDates(end) = t_i;
         allPayDates = [t0; payDates];
@@ -82,4 +80,3 @@ for i = 1 : nDates
     ratesOut{i}    = rates * 100;
 end
 end
-

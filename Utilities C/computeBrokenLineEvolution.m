@@ -27,7 +27,10 @@ function [tau_star, L_star] = computeBrokenLineEvolution(SpreadsFilt, datesFilt,
         T_dates = SpreadsFilt(i).ExpiryDates;
         s       = SpreadsFilt(i).(spreadField);
         
-        tau = (T_dates - t0) / 365.25;
+        % Check for the days without bonds
+        if isempty(T_dates), continue; end
+        
+        tau = yearfrac(repmat(t0, size(T_dates)), T_dates, 3);
         
         [tau_sorted, sortIdx] = sort(tau);
         s_sorted = s(sortIdx);

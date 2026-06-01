@@ -25,7 +25,8 @@ function [slopeSign, spread10y] = computeSlopeAndSpread(SpreadsFilt, datesFilt, 
         
         T_dates = SpreadsFilt(i).ExpiryDates(:);
         s       = SpreadsFilt(i).(spreadField)(:);
-        tau     = (T_dates - datesFilt(i)) / 365.25;
+        tau = yearfrac(repmat(datesFilt(i), size(T_dates)), T_dates, 3);
+        %tau     = (T_dates - datesFilt(i)) / 365;
         
         % Sort maturities to ensure correct left/right splitting
         [tau, idx] = sort(tau);

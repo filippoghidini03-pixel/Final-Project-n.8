@@ -25,18 +25,19 @@ data = readcell(filename, 'Sheet', 'Data');
 
 EXCEL_BASE = datenum('30/12/1899', 'dd/mm/yyyy');
 
-% Stiamo verificando come sono importate le date da excel, e voglia
-% rimpiazzare i buchi o cose strane con i NaN, se presenti
+% Check how dates are imported from Excel and replace any gaps 
+% or invalid formats with NaNs
 isDT = cellfun(@isdatetime, data);
 data(isDT) = cellfun(@(x) datenum(x), data(isDT), 'UniformOutput', false);
+
 isInvalid  = cellfun(@(x) (~isnumeric(x) && ~ischar(x)) || (isnumeric(x) && isempty(x)), data);
 data(isInvalid) = {NaN};
 
-% Serve per vedere quante colonne vuote ci sono tra un bond e l'altro
+% Determine the column stride (number of columns) between one bond and the next
 hasDirty = any(cellfun(@(x) ischar(x) && strcmpi(strtrim(x), 'PX_DIRTY_MID'), data(2,:)));
 stride   = 3 + hasDirty;
 
-% Costruisce una mappa dei bond, molto utile per trovare rapidamente il bond
+% Build a map of the bonds, very useful for quickly looking up bond column indices
 dataMap = containers.Map();
 for c = 1:stride:size(data, 2)
     name = data{1, c};
@@ -46,28 +47,31 @@ for c = 1:stride:size(data, 2)
     dataMap(strtrim(name)) = c;
 end
 
-% Iniziamo a costruire la struct
+% Initialize the output struct array
 bond      = struct('BBGname',{}, 'settleDate',{}, 'expDate',{}, ...
                    'firstCouponDate',{}, 'couponValue',{}, 'couponFrequency',{}, ...
                    'pricesDates',{}, 'pricesCleanValues',{}, 'pricesDirtyValues',{});
 nKept     = 0;
-% Vogliamo solo i numeri, le prime due righe non ci servono
+
+% We only want numerical data; skip the first two header rows
 priceRows = data(3:end, :);
 
-% Clean remaining text cells by forcing them to NaN to avoid crash
+% Clean remaining text cells by forcing them to NaN to avoid crashes
 isNonNumeric = ~cellfun(@isnumeric, priceRows);
 priceRows(isNonNumeric) = {NaN};
 
-% Iniziamo a leggere il foglio dalla riga 3
+% Start reading the info sheet from row 3 (skipping headers)
 for r = 3:size(info, 1)
-    % Prendiamo il nome del bond, usando la mappa creata prima, guarda la
-    % prima colonna del foglio info
+    
+    % Get the bond ticker from the first column of the info sheet
     bbg = info{r, 1};
-    % Se la cella è vuota o non esiste il nome nella mappa saltiamo
+    
+    % If the cell is empty or the ticker is not in the map, skip to the next
     if ~ischar(bbg) || isempty(bbg) 
         continue; 
     end
     bbg = strtrim(bbg);
+    
     if ~isKey(dataMap, bbg)
         continue; 
     end
@@ -92,6 +96,7 @@ for r = 3:size(info, 1)
     
     dates       = dArr(valid);
     cleanPrices = clArr(valid);
+    
     if isempty(dates) 
         continue; 
     end
@@ -101,10 +106,10 @@ for r = 3:size(info, 1)
     
     % Dirty = clean + accrued  
     % Passing firstCpn perfectly integrates with the math-based computeAccrual
-    
     dirtyPrices = cleanPrices + computeAccrual(dates, firstCpn, cpnValue, cpnFreq);
     
     nKept = nKept + 1;
+    
     bond(nKept).BBGname           = bbg;
     bond(nKept).settleDate        = settleDate;
     bond(nKept).expDate           = expDate;

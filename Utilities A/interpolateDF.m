@@ -17,13 +17,12 @@ end
 t0    = knownDates(1);
 valid = ~isnan(knownPD) & ~isnan(knownDates);
 
-tauVec  = max(yearfrac(t0, knownDates(valid), 3), 1e-6);   % Act/365
+tauVec = max(yearfrac(repmat(t0, sum(valid), 1), knownDates(valid), 3), 1e-6);   % Act/365
 zVec    = -log(knownPD(valid)) ./ tauVec;
 zVec(1) = zVec(2);   % stabilise anchor at t0 (avoid divide-by-zero artifacts)
 
 queryDates = queryDates(:);
-t0_vec_query = repmat(t0, length(queryDates), 1);
-tauQ = yearfrac(t0_vec_query, queryDates, 3);% Act/365
+tauQ = yearfrac(repmat(t0, length(queryDates), 1), queryDates, 3); % Act/365
 %tauQ = (queryDates - t0) / 365;   % Act/365
 zQ   = interp1(tauVec, zVec, tauQ, 'linear', 'extrap');
 df   = exp(-zQ .* tauQ);

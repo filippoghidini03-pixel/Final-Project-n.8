@@ -1,4 +1,5 @@
 %% Run_project_8.m
+tic
 clear all; 
 close all; 
 clc;
@@ -83,3 +84,4 @@ save('Part_E.mat', 'FSI_euro_z', 'FSI_italy_z', 'FSI_spain_z');
 fprintf('=== Part E Complete ===\n');
 %% Comparison ASW vs Zeta spread
 plotASWvsZeta(dates_BTP, spread10y_BTP, dates_BTP_z, spread10y_BTP_z, dates_BON, spread10y_BON, dates_BON_z, spread10y_BON_z);
+tempo=toc

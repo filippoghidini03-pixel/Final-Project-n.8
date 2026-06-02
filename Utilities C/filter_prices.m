@@ -1,22 +1,23 @@
 function g = filter_prices(prices, threshold)
 %
-% INPUTS:
-%   prices    - A numeric vector representing a time series of prices or spreads.
-%   threshold - The minimum absolute change required to trigger the filter.
+%   INPUTS:
+%       prices    - A numeric vector representing a time series of prices or spreads.
+%       threshold - A scalar defining the minimum absolute jump required 
+%                   to trigger the filter.
 %               
-% OUTPUT:
-%   g         - The filtered numeric vector where isolated spikes have been 
-%               smoothed out using the arithmetic mean of adjacent points.
+%   OUTPUT:
+%       g         - The filtered numeric vector where isolated spikes have 
+%                   been smoothed out.
 
-g = prices;
-
-for i = 2:length(prices)-1
-    d1 = prices(i)   - prices(i-1);
-    d2 = prices(i+1) - prices(i);
+    g = prices;
+    d = diff(prices); 
     
-    % Check if both jumps exceed the threshold and are in opposite directions
-    if abs(d1) > threshold && abs(d2) > threshold && d1*d2 < 0
-        g(i) = (prices(i+1) + prices(i-1)) / 2;
-    end
-end
+    d1 = d(1:end-1);
+    d2 = d(2:end);
+    
+    % Find spikes: jump > threshold in both directions and with opposite signs
+    spike_idx = find(abs(d1) > threshold & abs(d2) > threshold & (d1 .* d2 < 0)) + 1;
+    
+    % Interpolate using the average of the neighboring points
+    g(spike_idx) = (prices(spike_idx - 1) + prices(spike_idx + 1)) / 2;
 end

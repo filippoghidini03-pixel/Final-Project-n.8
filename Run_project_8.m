@@ -82,4 +82,4 @@ plotFSI(FSI_italy_z, FSI_spain_z, FSI_euro_z, eon_t0, spread10y_plot_BTP_z, eon_
 save('Part_E.mat', 'FSI_euro_z', 'FSI_italy_z', 'FSI_spain_z');
 fprintf('=== Part E Complete ===\n');
 %% Comparison ASW vs Zeta spread
-plotASWvsZeta(dates_BTP, spread10y_BTP, dates_BTP_z, spread10y_BTP_z, dates_BON, spread10y_BON, dates_BON_z, spread10y_BON_z);
+plotASWvsZeta(eon_t0, spread10y_plot_BTP, eon_t0, spread10y_plot_BTP_z, eon_t0, spread10y_plot_BON, eon_t0, spread10y_plot_BON_z);

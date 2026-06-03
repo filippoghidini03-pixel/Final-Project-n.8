@@ -51,9 +51,6 @@ nDates = length(EONIA);
     BTP_settle = precomputeSettleDates(bond_BTP);
     BON_settle = precomputeSettleDates(bond_BON);
 
-    fprintf('Avvio calcolo parallelo (parfor) su %d giorni di mercato...\n', nDates);
-    fprintf('(L''operazione potrebbe richiedere qualche minuto. Attendi...)\n');
-
     % --- 3. LOOP PARALLELO ---
     parfor i = 1:nDates
         t0       = eon_t0(i);

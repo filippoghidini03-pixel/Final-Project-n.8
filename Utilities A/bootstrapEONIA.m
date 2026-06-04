@@ -1,4 +1,4 @@
-function [allDatesOut, PDout, ratesOut] = bootstrapEONIA(OIS_raw, settleLag)
+function [allDatesOut, PDout, ratesOut] = bootstrapEONIA(OIS_raw)
 % BOOTSTRAPEONIA Bootstraps the EONIA discount curve from Overnight Indexed Swap (OIS) quotes.
 %
 % INPUTS:

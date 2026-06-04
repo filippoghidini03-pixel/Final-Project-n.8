@@ -26,7 +26,7 @@ cpnDates = datemnth(firstCpnDate, (kMin:kMax)' * monthsPerPeriod);
 idx     = discretize(settle, cpnDates);
 prevCpn = cpnDates(idx);
 
-% Accrued interest calculation (Actual/360 convention)
-ai = cpnValue * yearfrac(prevCpn, settle, 2);
+% Accrued interest calculation (30/360 convention)
+ai = cpnValue * yearfrac(prevCpn, settle, 6);
 
 end

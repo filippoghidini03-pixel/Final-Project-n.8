@@ -112,10 +112,3 @@ save('Part_E.mat', 'FSI_euro_z', 'FSI_italy_z', 'FSI_spain_z');
 fprintf('=== Part E Complete ===\n');
 %% Comparison ASW vs Zeta spread
 plotASWvsZeta(eon_t0, spread10y_plot_BTP, eon_t0, spread10y_plot_BTP_z, eon_t0, spread10y_plot_BON, eon_t0, spread10y_plot_BON_z);
-%%
-dv   = datevec(dates_BTP);
-mask = (dv(:,1) == 2011) & (dv(:,2) == 11);
-T = table(cellstr(datestr(dates_BTP(mask))), tau_star_BTP(mask), ...
-          slopeSign_BTP(mask), spread10y_BTP(mask), ...
-          'VariableNames', {'Date','tau_star','slope','spread10y'});
-disp(T)

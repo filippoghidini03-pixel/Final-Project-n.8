@@ -50,11 +50,9 @@ for j = 1:nBonds
     % ---- 7. Yearfracs ----
     %
     %   Fixed leg: 30/360 European (basis=6).
-    %   Consistent with computeAccrual.m (Part A) which uses the European
+    %   Consistent with the Acrrual computed in part A, which uses the European
     %   30/360 convention for accrued interest on BOTH BTPs and BONOs.
     
-    %cpnPrev = [t0; cpnDates(1:end-1)];
-    %delta_f  = yearfrac(cpnPrev, cpnDates, 6);   % 30/360 European
     monthsPerPeriod = round(12 / freq);
     cpnStartDates   = datemnth(cpnDates, -monthsPerPeriod);
     delta_f = yearfrac(cpnStartDates, cpnDates, 6);
@@ -85,8 +83,9 @@ for j = 1:nBonds
     taus_cpn = yearfrac(t0, cpnDates, 3);   % Act/365
     tau_T    = yearfrac(t0, T,        3);   % Act/365
     if tau_T <= 0, continue; end
-
-    cf_cpn = c * delta_f;   % coupon cash flows as fraction of par
+    
+    delta_z = yearfrac(cpnStartDates, cpnDates, 3);
+    cf_cpn = c * delta_z;   % coupon cash flows as fraction of par
 
     objFun = @(z) sum(cf_cpn .* DF_cpn .* exp(-z .* taus_cpn)) ...
                 + DF_T * exp(-z * tau_T) - dirtyP;

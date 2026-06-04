@@ -57,20 +57,9 @@ function [slopeSign, spread10y] = computeSlopeAndSpread(SpreadsFilt, datesFilt, 
             spread10y(i) = polyval(pR, eval_point);
         end
         
-        % --- 2. Evaluate the Short-Term Spread (0.5 Years) ---
-        if 0.5 <= ts
-            s_short = polyval(pL, 0.5);
-        else
-            s_short = polyval(pR, 0.5);
+        % --- 2. Determine Curve Inversion (Slope Sign) ---
+        if pL(1)<0
+            slopeSign(i) = -1;  
         end
-        
-        % --- 3. Determine Curve Inversion (Slope Sign) ---
-        % If short-term spread is greater than long-term spread, curve is inverted
-        if s_short > spread10y(i)
-            slopeSign(i) = -1;
-        end
-        %if pL(1)<0
-            %slopeSign(i) = -1;   % +1 pendenza positiva (normale), -1 negativa (invertita)
-        %end
     end
 end

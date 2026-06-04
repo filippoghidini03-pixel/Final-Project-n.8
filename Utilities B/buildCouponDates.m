@@ -1,7 +1,7 @@
 function cpnDates = buildCouponDates(firstCpn, expDate, freq, t0)
 %BUILDCOUPONDATES  Generate coupon dates strictly after t0 up to expDate.
 %
-%   Advances from firstCpn by (12/freq) calendar months using datemnth,
+%   Advances from firstCpn by calendar months using datemnth,
 %   consistent with how bootstrapEONIA generates OIS pay dates.
 %   The last date is snapped to expDate (standard bond convention).
 

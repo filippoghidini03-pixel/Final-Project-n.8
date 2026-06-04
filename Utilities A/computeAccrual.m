@@ -10,10 +10,10 @@ function ai = computeAccrual(dates, firstCpnDate, cpnValue, cpnFreq)
 %   ai           - Vector of calculated accrued interest values.
 
 monthsPerPeriod = 12 / cpnFreq;
-% We have to shift the date 
+% Settlement date shifted
 settle = dates(:) + 2;
 wd = weekday(dates(:));
-% We have to avoid weekend
+% Avoid weekend
 settle(wd == 5) = settle(wd == 5) + 2;   
 settle(wd == 6) = settle(wd == 6) + 2;   
 

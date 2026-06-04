@@ -30,12 +30,11 @@ function [Spreads_BTP, Spreads_BON] = computeASWspreads(EONIA, bond_BTP, bond_BO
 %     .ASWSpreads   (Mx1 double)   - ASW spreads in basis points
 %     .ZetaSpreads  (Mx1 double)   - Z-spreads  in basis points
 %
-
 nDates = length(EONIA);
     
-    % --- 1. Preallocazione stretta (Obbligatoria per il parfor) ---
-    % Quando si usa parfor, MATLAB deve sapere esattamente come "affettare" (slice)
-    % la memoria in uscita. Preallocare l'intera struct è essenziale.
+    % --- 1. Strict preallocation (Mandatory for parfor) ---
+    % When using parfor, MATLAB must know exactly how to "slice"
+    % the output memory. Preallocating the entire struct is essential.
     Spreads_BTP = struct('ExpiryDates', cell(nDates,1), ...
                          'ASWSpreads',  cell(nDates,1), ...
                          'ZetaSpreads', cell(nDates,1));
@@ -43,41 +42,41 @@ nDates = length(EONIA);
     Spreads_BON = struct('ExpiryDates', cell(nDates,1), ...
                          'ASWSpreads',  cell(nDates,1), ...
                          'ZetaSpreads', cell(nDates,1));
-
-    % --- 2. Variabili in Broadcast ---
-    % Estraiamo i t0 fuori dal loop per evitare overhead di accesso
+                         
+    % --- 2. Broadcast Variables ---
+    % Extract t0 outside the loop to prevent access overhead
     eon_t0 = arrayfun(@(x) x.Dates(1), EONIA);
     
     BTP_settle = precomputeSettleDates(bond_BTP);
     BON_settle = precomputeSettleDates(bond_BON);
-
-    % --- 3. LOOP PARALLELO ---
+    
+    % --- 3. PARALLEL LOOP ---
     parfor i = 1:nDates
         t0       = eon_t0(i);
         eonDates = EONIA(i).Dates;
         eonDF    = EONIA(i).DiscountFactors;
-
-        % Filtro per la scadenza: (t0 + 2 mesi,  t0 + 10 anni]
+        
+        % Expiry filter: (t0 + 2 months,  t0 + 10 years]
         minExp = shiftDate(t0,   2, 'months');   
         maxExp = shiftDate(t0, 120, 'months');   
-
-        % Calcolo per i BTP
+        
+        % Calculation for BTPs
         [ed_BTP, asw_BTP, zs_BTP] = computeSpreadsForBonds( ...
             bond_BTP, BTP_settle, t0, minExp, maxExp, eonDates, eonDF);
             
-        % Calcolo per i BONOS
+        % Calculation for BONOs
         [ed_BON, asw_BON, zs_BON] = computeSpreadsForBonds( ...
             bond_BON, BON_settle, t0, minExp, maxExp, eonDates, eonDF);
-
-        % --- Slicing per il salvataggio in output ---
+            
+        % --- Slicing for output storage ---
         Spreads_BTP(i).ExpiryDates = ed_BTP;
         Spreads_BTP(i).ASWSpreads  = asw_BTP;
         Spreads_BTP(i).ZetaSpreads = zs_BTP;
-
+        
         Spreads_BON(i).ExpiryDates = ed_BON;
         Spreads_BON(i).ASWSpreads  = asw_BON;
         Spreads_BON(i).ZetaSpreads = zs_BON;
     end
     
-    fprintf('=== Calcolo ASW e Z-Spread Completato! ===\n');
+    fprintf('=== ASW and Z-Spread Calculation Completed! ===\n');
 end

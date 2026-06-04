@@ -19,7 +19,7 @@ while true
     if d_prev <= t0
         break
     end
-    dates = [d_prev; dates];  %#ok<AGROW>
+    dates = [d_prev; dates];  
     d = d_prev;
 end
 

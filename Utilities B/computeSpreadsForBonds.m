@@ -84,7 +84,7 @@ for j = 1:nBonds
     tau_T    = yearfrac(t0, T,        3);   % Act/365
     if tau_T <= 0, continue; end
     
-    delta_z = yearfrac(cpnStartDates, cpnDates, 3);
+    delta_z = yearfrac(cpnStartDates, cpnDates, 3); % Act/365
     cf_cpn = c * delta_z;   % coupon cash flows as fraction of par
 
     objFun = @(z) sum(cf_cpn .* DF_cpn .* exp(-z .* taus_cpn)) ...

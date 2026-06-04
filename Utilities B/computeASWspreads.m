@@ -47,8 +47,8 @@ nDates = length(EONIA);
     % Extract t0 outside the loop to prevent access overhead
     eon_t0 = arrayfun(@(x) x.Dates(1), EONIA);
     
-    BTP_settle = precomputeSettleDates(bond_BTP);
-    BON_settle = precomputeSettleDates(bond_BON);
+    BTP_settle = {bond_BTP.pricesDates}';
+    BON_settle = {bond_BON.pricesDates}';
     
     % --- 3. PARALLEL LOOP ---
     parfor i = 1:nDates

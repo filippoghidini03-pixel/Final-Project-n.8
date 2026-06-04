@@ -35,7 +35,7 @@ function [tau_star, L_star] = computeBrokenLineEvolution(SpreadsFilt, datesFilt,
         [tau_sorted, sortIdx] = sort(tau);
         s_sorted = s(sortIdx);
         
-        if length(tau_sorted) >= 7
+        if length(tau_sorted) >= 6
             [ts, Ls]    = fitBrokenLine(tau_sorted, s_sorted);
             tau_star(i) = ts;
             L_star(i)   = Ls;

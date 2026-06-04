@@ -9,6 +9,7 @@ function param = initParameters()
     param.tN = datenum('31/12/2015', 'dd/mm/yyyy');
 
     % --- Market Conventions & Limits ---
+    param.settleLag = 2;
     param.maxTenorYears = 10;  % Maximum OIS tenor maturity used in bootstrap
 
     % --- Input File Paths ---

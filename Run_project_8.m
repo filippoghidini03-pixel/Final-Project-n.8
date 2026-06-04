@@ -6,6 +6,7 @@
 %   2. Compute ASW spread and Zeta spread over EONIA for the 2 countries.
 %   3. Construct the best fit of ASW and Zeta spreads for a straight line broken in one point.
 %   4. Build the FSI.
+
 clear all; 
 close all; 
 clc;
@@ -34,8 +35,8 @@ EONIA    = buildEONIAstruct(Dates, Discounts, Rates);
 bond_BTP = buildBondStruct(param.fileBTP, param.t1, param.tN);
 bond_BON = buildBondStruct(param.fileBON, param.t1, param.tN);
 
-% Plots EONIA discount curve from OIS dataset. Since we compute around 2300 curves, we only plot 5 of them to have
-% a first impression on how the curve evolves over time.
+% Plots EONIA discount curve from OIS dataset. Since we compute around 2300 curves, 
+% we only plot 5 of them to have a first impression on how the curve evolves over time.
 plotEONIA(EONIA, []);
 save('Part_A.mat', 'EONIA', 'bond_BTP', 'bond_BON');
 fprintf('BTPs: %d | BONOs: %d\n=== Part A Complete ===\n\n', length(bond_BTP), length(bond_BON));
@@ -111,3 +112,10 @@ save('Part_E.mat', 'FSI_euro_z', 'FSI_italy_z', 'FSI_spain_z');
 fprintf('=== Part E Complete ===\n');
 %% Comparison ASW vs Zeta spread
 plotASWvsZeta(eon_t0, spread10y_plot_BTP, eon_t0, spread10y_plot_BTP_z, eon_t0, spread10y_plot_BON, eon_t0, spread10y_plot_BON_z);
+%%
+dv   = datevec(dates_BTP);
+mask = (dv(:,1) == 2011) & (dv(:,2) == 11);
+T = table(cellstr(datestr(dates_BTP(mask))), tau_star_BTP(mask), ...
+          slopeSign_BTP(mask), spread10y_BTP(mask), ...
+          'VariableNames', {'Date','tau_star','slope','spread10y'});
+disp(T)

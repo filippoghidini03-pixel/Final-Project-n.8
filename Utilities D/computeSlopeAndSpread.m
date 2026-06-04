@@ -69,5 +69,8 @@ function [slopeSign, spread10y] = computeSlopeAndSpread(SpreadsFilt, datesFilt, 
         if s_short > spread10y(i)
             slopeSign(i) = -1;
         end
+        %if pL(1)<0
+            %slopeSign(i) = -1;   % +1 pendenza positiva (normale), -1 negativa (invertita)
+        %end
     end
 end

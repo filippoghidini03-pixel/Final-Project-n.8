@@ -1,4 +1,4 @@
-function [allDatesOut, PDout, ratesOut] = bootstrapEONIA(OIS_raw)
+function [allDatesOut, PDout, ratesOut] = bootstrapEONIA(OIS_raw, settleLag)
 % BOOTSTRAPEONIA Bootstraps the EONIA discount curve from Overnight Indexed Swap (OIS) quotes.
 %
 % INPUTS:
@@ -28,9 +28,9 @@ for i = 1 : nDates
     tenorsYr = OIS_raw(i).tenors;
     
     % Use the unified shiftDate function to calculate the settlement date (t0)
-    % t0     = shiftDate(vd, settleLag, 'busdays');
+     t0     = shiftDate(vd, settleLag, 'busdays');
     % No shift needed because the provided dates are already settlement dates
-    t0 = vd ;
+    %t0 = vd ;
     nKnots = length(tenorsYr);
     
     % Use the unified shiftDate function to calculate maturity dates (Modified Following)

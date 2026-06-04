@@ -52,21 +52,25 @@ for j = 1:nBonds
     %   Fixed leg: 30/360 European (basis=6).
     %   Consistent with computeAccrual.m (Part A) which uses the European
     %   30/360 convention for accrued interest on BOTH BTPs and BONOs.
-    cpnPrev = [t0; cpnDates(1:end-1)];
-    delta_f  = yearfrac(cpnPrev, cpnDates, 6);   % 30/360 European
+    
+    %cpnPrev = [t0; cpnDates(1:end-1)];
+    %delta_f  = yearfrac(cpnPrev, cpnDates, 6);   % 30/360 European
+    monthsPerPeriod = round(12 / freq);
+    cpnStartDates   = datemnth(cpnDates, -monthsPerPeriod);
+    delta_f = yearfrac(cpnStartDates, cpnDates, 6);
 
     %   Floating leg: Act/360 (basis=2).
     %   Same basis used in bootstrapEONIA.m for OIS short-tenor deltas.
     delta_k  = yearfrac(floatDates(1:end-1), floatDates(2:end), 2);
 
-    % ---- 8. ASW spread (Baviera-Lebovitz formula) ----
+    % ---- 8. ASW spread ----
     %
     %   Numerator:   B(t0,T) - P(0) + c * sum_n[ delta_f(n) * B(t0,t_n) ]
     %   Denominator: sum_k[ delta_k * B(t0,t_k) ]
     %
     %   The denominator is built on the BACKWARD-constructed float dates:
     %   discount factors and yearfracs are taken for the same quarterly grid
-    %   anchored at T (as prescribed by the paper).
+    %   anchored at T.
     numerator   = DF_T - dirtyP + c * sum(delta_f .* DF_cpn);
     denominator = sum(delta_k .* DF_float);
 
@@ -78,8 +82,8 @@ for j = 1:nBonds
     %   Find z such that:
     %     P(0) = c * sum_n[ delta_f(n) * B(t0,t_n) * exp(-z*tau_n) ]
     %           + B(t0,T) * exp(-z * tau_T)
-    taus_cpn = yearfrac(t0, cpnDates, 1);   % Act/365
-    tau_T    = yearfrac(t0, T,        1);   % Act/365
+    taus_cpn = yearfrac(t0, cpnDates, 3);   % Act/365
+    tau_T    = yearfrac(t0, T,        3);   % Act/365
     if tau_T <= 0, continue; end
 
     cf_cpn = c * delta_f;   % coupon cash flows as fraction of par

@@ -110,5 +110,6 @@ spread10y_plot_BON_z = computeRawSpread10y(Spreads_BON, 'ZetaSpreads');
 plotFSI(FSI_italy_z, FSI_spain_z, FSI_euro_z, eon_t0, spread10y_plot_BTP_z, eon_t0, spread10y_plot_BON_z, 'Zeta');
 save('Part_E.mat', 'FSI_euro_z', 'FSI_italy_z', 'FSI_spain_z');
 fprintf('=== Part E Complete ===\n');
+
 %% Comparison ASW vs Zeta spread and analyzing the 2011-2012 crisis period
 plotASWvsZeta(eon_t0, spread10y_plot_BTP, eon_t0, spread10y_plot_BTP_z, eon_t0, spread10y_plot_BON, eon_t0, spread10y_plot_BON_z);

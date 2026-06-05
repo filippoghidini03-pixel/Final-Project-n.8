@@ -49,7 +49,7 @@ for j = 1:nBonds
 
     % ---- 7. Yearfracs ----
     %
-    %   Fixed leg: 30/360 European (basis=6).
+    %   Fixed leg: 30/360 European.
     %   Consistent with the Acrrual computed in part A, which uses the European
     %   30/360 convention for accrued interest on BOTH BTPs and BONOs.
     

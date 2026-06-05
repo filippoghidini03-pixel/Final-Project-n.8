@@ -12,6 +12,15 @@ function plotASWvsZeta(dates_BTP, spread10y_BTP, dates_BTP_z, spread10y_BTP_z, .
 %       dates_BON, spread10y_BON     - Dates and 10y ASW spreads for Spain
 %       dates_BON_z, spread10y_BON_z - Dates and 10y Zeta spreads for Spain
 
+    % Find the global minimum and maximum dates across all datasets
+    minDate = min([dates_BTP(:); dates_BON(:)]);
+    maxDate = max([dates_BTP(:); dates_BON(:)]);
+    
+    % Create a tick vector for January 1st of each year in the range
+    [minY, ~, ~] = datevec(minDate);
+    [maxY, ~, ~] = datevec(maxDate);
+    yearTicks = datenum(minY:maxY, 1, 1);
+    
     figure('Name', 'ASW vs Zeta Spread', 'Position', [100 50 1200 500]);
     
     % --- Top Panel: Italy (BTP) ---
@@ -19,7 +28,12 @@ function plotASWvsZeta(dates_BTP, spread10y_BTP, dates_BTP_z, spread10y_BTP_z, .
     plot(dates_BTP, spread10y_BTP, 'b-', 'LineWidth', 1, 'DisplayName', 'ASW');
     hold on;
     plot(dates_BTP_z, spread10y_BTP_z, 'r-', 'LineWidth', 1, 'DisplayName', 'Zeta');
+    
+    % Force exact x-axis limits and display all annual ticks
+    xlim([minDate, maxDate]);
+    set(gca, 'XTick', yearTicks);
     datetick('x', 'yyyy', 'keepticks');
+    
     ylabel('[bps]'); 
     title('Italy (BTP)');
     legend('Location', 'northwest'); 
@@ -31,7 +45,12 @@ function plotASWvsZeta(dates_BTP, spread10y_BTP, dates_BTP_z, spread10y_BTP_z, .
     plot(dates_BON, spread10y_BON, 'b-', 'LineWidth', 1, 'DisplayName', 'ASW');
     hold on;
     plot(dates_BON_z, spread10y_BON_z, 'r-', 'LineWidth', 1, 'DisplayName', 'Zeta');
+    
+    % Force exact x-axis limits and display all annual ticks
+    xlim([minDate, maxDate]);
+    set(gca, 'XTick', yearTicks);
     datetick('x', 'yyyy', 'keepticks');
+    
     ylabel('[bps]'); 
     title('Spain (BONO)');
     legend('Location', 'northwest'); 

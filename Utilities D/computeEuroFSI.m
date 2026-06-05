@@ -28,13 +28,13 @@ function [FSI_euro, FSI_italy, FSI_spain] = computeEuroFSI( ...
     % Initialize the Eurozone FSI struct array
     FSI_euro = struct('month', cell(M,1), 'value', cell(M,1), 'color', cell(M,1));
     
-    % Vectorized extraction and element-wise maximum (Baviera-Lebovitz Eq. 1)
+    % Vectorized extraction and element-wise maximum 
     val = max([FSI_italy.value]', [FSI_spain.value]');
     
     % Map the values back to the struct array and assign colors
     for m = 1:M
         FSI_euro(m).month = months_IT(m);
         FSI_euro(m).value = val(m);
-        FSI_euro(m).color = colorMap{val(m) + 1}; % +1 because values are 0, 1, 2
+        FSI_euro(m).color = colorMap{val(m) + 1}; 
     end
 end

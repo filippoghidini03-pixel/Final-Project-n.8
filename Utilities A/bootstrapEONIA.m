@@ -64,7 +64,7 @@ for i = 1 : nDates
         payDates      = shiftDate(t0, (1:nYears)' * 12, 'months');
         payDates(end) = t_i;
         allPayDates = [t0; payDates];
-        deltas      = yearfrac(allPayDates(1:end-1), allPayDates(2:end), 2);
+        deltas      = yearfrac(allPayDates(1:end-1), allPayDates(2:end), 3);
         
         % Interpolate the discount factors for intermediate payment dates
         pdVec       = interpolateDF(allDates, PD, payDates(1:end-1));

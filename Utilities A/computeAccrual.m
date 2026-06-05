@@ -14,8 +14,8 @@ monthsPerPeriod = 12 / cpnFreq;
 % Generate coupon dates covering all settle dates.
 % We need to ensure coverage in both directions
 % relative to the very first coupon date
-kMin = floor(yearfrac(firstCpnDate, min(settle), 2) * cpnFreq) - 2;
-kMax = ceil( yearfrac(firstCpnDate, max(settle), 2) * cpnFreq) + 2;
+kMin = floor(yearfrac(firstCpnDate, min(settle), 6) * cpnFreq) - 2;
+kMax = ceil( yearfrac(firstCpnDate, max(settle), 6) * cpnFreq) + 2;
 
 % Create the grid of exact coupon dates
 cpnDates = datemnth(firstCpnDate, (kMin:kMax)' * monthsPerPeriod);
